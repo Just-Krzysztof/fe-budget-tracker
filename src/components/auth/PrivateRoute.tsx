@@ -1,31 +1,33 @@
-import { ReactNode } from 'react';
+import React, { useContext } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 
 interface PrivateRouteProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-export const PrivateRoute = ({ children }: PrivateRouteProps) => {
-  const { isAuthenticated, isLoading } = useAuth();
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+  const { isAuthenticated, isLoading } = useContext(AuthContext);
   const location = useLocation();
 
-  // Jeśli trwa ładowanie, możemy pokazać loader
+  // If loading is in progress, we can show a loader
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div>
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
-  // Jeśli użytkownik nie jest uwierzytelniony, przekieruj do logowania
+  // If user is not authenticated, redirect to login
   if (!isAuthenticated) {
-    // Zapisujemy ścieżkę, z której użytkownik został przekierowany
-    // Aby po zalogowaniu wrócić do tej ścieżki
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    // Save the path from which the user was redirected
+    // So we can return to this path after login
+    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
-  // Jeśli użytkownik jest uwierzytelniony, renderuj chronioną zawartość
+  // If user is authenticated, render the protected content
   return <>{children}</>;
-}; 
+};
+
+export default PrivateRoute; 

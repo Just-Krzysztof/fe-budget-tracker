@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { authService } from '../services/authService';
 import { 
   User, 
@@ -8,97 +8,131 @@ import {
   RegisterFormData 
 } from '../types/auth.types';
 
-// Create context with default value
-const AuthContext = createContext<AuthContextType>({
-  user: null,
+// Create authentication context
+export const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
+  user: null,
   isLoading: true,
-  error: null,
-  login: async () => {},
-  register: async () => {},
+  login: async () => ({ access_token: '', user: {} as User }),
+  register: async () => ({ access_token: '', user: {} as User }),
   logout: () => {},
 });
 
-// Hook for components to easily access the context
-export const useAuth = () => useContext(AuthContext);
-
 // Authentication context provider
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Check authentication on first render
-  useEffect(() => {
-    const checkAuthStatus = () => {
-      try {
-        const { isAuthenticated: authenticated, user: authUser } = authService.checkAuth();
+  // Function to check authentication status
+  const checkAuthStatus = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      // First check local storage for token and user data
+      const { isAuthenticated: isAuthFromStorage, user: userFromStorage } = authService.checkAuth();
+      
+      if (isAuthFromStorage && userFromStorage) {
+        // If we have data in storage, set authenticated state
+        setIsAuthenticated(true);
+        setUser(userFromStorage);
         
-        if (authenticated && authUser) {
-          setUser(authUser);
-          setIsAuthenticated(true);
-        } else {
-          setUser(null);
-          setIsAuthenticated(false);
-        }
-      } catch (err) {
-        console.error('Error checking authentication status:', err);
-        setUser(null);
+        // Validate token in the background without blocking the UI
+        authService.validateToken().catch(error => {
+          console.error('Token validation error:', error);
+        });
+      } else {
+        // No auth data in storage
         setIsAuthenticated(false);
-      } finally {
-        setIsLoading(false);
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('Error checking authentication status:', error);
+      // Don't log out the user on error, just keep the current state
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Check authentication status on component mount
+  useEffect(() => {
+    checkAuthStatus();
+    
+    // Add event listener for storage changes (for multi-tab support)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'auth_token' || e.key === 'auth_user') {
+        checkAuthStatus();
       }
     };
-
-    checkAuthStatus();
-  }, []);
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [checkAuthStatus]);
 
   // Login function
   const login = async (data: LoginFormData) => {
-    setError(null);
+    setIsLoading(true);
     try {
       const response = await authService.login(data);
-      setUser(response.user);
-      setIsAuthenticated(true);
-    } catch (err) {
-      console.error('Login error:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred during login');
-      throw err;
+      
+      // After login, check auth status to get the user data
+      const { isAuthenticated: isAuth, user: userData } = authService.checkAuth();
+      
+      setIsAuthenticated(isAuth);
+      setUser(userData);
+      
+      return response;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // Registration function
   const register = async (data: RegisterFormData) => {
-    setError(null);
+    setIsLoading(true);
     try {
       const response = await authService.register(data);
-      setUser(response.user);
-      setIsAuthenticated(true);
-    } catch (err) {
-      console.error('Registration error:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred during registration');
-      throw err;
+      
+      // After registration, check auth status to get the user data
+      const { isAuthenticated: isAuth, user: userData } = authService.checkAuth();
+      
+      setIsAuthenticated(isAuth);
+      setUser(userData);
+      
+      return response;
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // Logout function
   const logout = () => {
     authService.logout();
-    setUser(null);
     setIsAuthenticated(false);
+    setUser(null);
   };
 
-  // Context value that will be provided to components
-  const value = {
-    user,
+  // Context value
+  const contextValue: AuthContextType = {
     isAuthenticated,
+    user,
     isLoading,
-    error,
     login,
     register,
     logout,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={contextValue}>
+      {children}
+    </AuthContext.Provider>
+  );
 }; 

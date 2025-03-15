@@ -1,47 +1,45 @@
-import { ReactNode } from 'react';
-
-// Login form interface
+// Login form data interface
 export interface LoginFormData {
   email: string;
   password: string;
 }
 
-// Registration form interface
+// Registration form data interface
 export interface RegisterFormData {
   email: string;
   password: string;
   firstName: string;
 }
 
-// Authentication response interface from API
-export interface AuthResponse {
-  user: {
-    id: string;
-    email: string;
-    firstName: string;
-  };
-  access_token: string;
-}
-
 // User interface
 export interface User {
   id: string;
   email: string;
-  firstName: string;
+  firstName?: string;
+  name?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-// Authentication context data interface
+// Authentication response interface
+export interface AuthResponse {
+  access_token: string;
+  user: User;
+  refresh_token?: string;
+  expires_in?: number;
+}
+
+// Authentication context type
 export interface AuthContextType {
-  user: User | null;
   isAuthenticated: boolean;
+  user: User | null;
   isLoading: boolean;
-  error: string | null;
-  login: (data: LoginFormData) => Promise<void>;
-  register: (data: RegisterFormData) => Promise<void>;
+  login: (data: LoginFormData) => Promise<AuthResponse>;
+  register: (data: RegisterFormData) => Promise<AuthResponse>;
   logout: () => void;
 }
 
-// Authentication provider properties
+// Authentication provider props
 export interface AuthProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 } 
