@@ -7,7 +7,7 @@ import RegisterPage from './pages/auth/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
 import './App.css'
 import ExpensesPage from './pages/ExpensesPage'
-
+import ListPage from './pages/ListPage'
 function App() {
   // const [isDarkMode, setIsDarkMode] = useState(false)
 
@@ -40,7 +40,7 @@ function App() {
           {/* Chronione ścieżki */}
           <Route path="/" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
           <Route path="/expenses" element={<PrivateRoute><ExpensesPage /></PrivateRoute>} />
-
+          <Route path="/list" element={<PrivateRoute><ListPage /></PrivateRoute>} />
           {/* Przekierowania */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

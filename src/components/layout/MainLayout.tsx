@@ -19,7 +19,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   // Navigation items
   const navItems = [
     { path: '/', label: 'Dashboard' },
-    { path: '/expenses', label: 'Expenses' }
+    { path: '/expenses', label: 'Expenses' },
+    { path: '/list', label: 'List' }
   ];
 
   return (
