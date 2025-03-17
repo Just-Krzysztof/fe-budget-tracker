@@ -35,6 +35,27 @@ export default {
           '2xl': '6rem',
         },
       },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-5px)' },
+          '20%, 40%, 60%, 80%': { transform: 'translateX(5px)' },
+        },
+        pulse: {
+          '0%': { opacity: '0.5' },
+          '50%': { opacity: '1' },
+          '100%': { opacity: '0.5' },
+        },
+      },
+      animation: {
+        'fadeIn': 'fadeIn 0.5s ease-out forwards',
+        'shake': 'shake 0.5s ease-in-out',
+        'pulse': 'pulse 1.5s ease-in-out infinite',
+      },
     },
   },
   plugins: [],

@@ -14,7 +14,6 @@ const ListPage = () => {
   const [selectedYear, setSelectedYear] = useState<number>(2025);
   const [selectedMonth, setSelectedMonth] = useState<number>(3);
   const [activeTab, setActiveTab] = useState<TabType>('expense');
-  const [isTabChanging, setIsTabChanging] = useState(false);
 
   const fetchData = async (year: string | number = selectedYear, month: string | number = selectedMonth) => {
     setLoading(true);
@@ -50,11 +49,7 @@ const ListPage = () => {
 
   const switchTab = (tab: TabType) => {
     if (tab !== activeTab) {
-      setIsTabChanging(true);
-      setTimeout(() => {
-        setActiveTab(tab);
-        setIsTabChanging(false);
-      }, 300);
+      setActiveTab(tab);
     }
   };
 
@@ -161,44 +156,43 @@ const ListPage = () => {
           </div>
         )}
         
-        {/* Tab Content */}
-        <div className="w-full relative min-h-[300px]">
-          {/* Expenses Tab */}
-          <div 
-            className={`transition-all duration-300 ${
-              activeTab === 'expense' ? 'block' : 'hidden'
-            }`}
-          >
-            <FinancialDataTable 
-              data={expensesData}
-              type="expense"
-            />
+        {/* Loading state */}
+        {loading && (
+          <div className="text-center py-10">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+            <p className="mt-2 text-gray-300">Loading data...</p>
           </div>
-
-          {/* Income Tab */}
-          <div 
-            className={`transition-all duration-300 ${
-              activeTab === 'income' ? 'block' : 'hidden'
-            }`}
-          >
-            <FinancialDataTable 
-              data={incomeData}
-              type="income"
-            />
-          </div>
-        </div>
-      </div>
-      
-      <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
+        )}
         
-        .animate-fadeIn {
-          animation: fadeIn 0.5s ease-out forwards;
-        }
-      `}</style>
+        {/* Tab Content */}
+        {!loading && (
+          <div className="w-full relative min-h-[300px]">
+            {/* Expenses Tab */}
+            <div 
+              className={`transition-all duration-300 ${
+                activeTab === 'expense' ? 'block' : 'hidden'
+              }`}
+            >
+              <FinancialDataTable 
+                data={expensesData}
+                type="expense"
+              />
+            </div>
+
+            {/* Income Tab */}
+            <div 
+              className={`transition-all duration-300 ${
+                activeTab === 'income' ? 'block' : 'hidden'
+              }`}
+            >
+              <FinancialDataTable 
+                data={incomeData}
+                type="income"
+              />
+            </div>
+          </div>
+        )}
+      </div>
     </MainLayout>
   );
 };

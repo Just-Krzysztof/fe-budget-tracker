@@ -19,9 +19,7 @@ const ExpensesForm = ({ tags = [], loading=false }: ExpensesFormProps) => {
     type: 'expense', 
     date: today 
   });
-
-  // State for input focus
-  const [isValueFocused, setIsValueFocused] = useState(false);
+  
   // Display value for the input (to handle the formatting)
   const [displayValue, setDisplayValue] = useState('0');
 
@@ -115,7 +113,6 @@ const ExpensesForm = ({ tags = [], loading=false }: ExpensesFormProps) => {
 
   // Handle focus on value input
   const handleValueFocus = () => {
-    setIsValueFocused(true);
     // Clear the input if it's just 0
     if (formData.value === 0) {
       setDisplayValue('');
@@ -124,7 +121,6 @@ const ExpensesForm = ({ tags = [], loading=false }: ExpensesFormProps) => {
 
   // Handle blur on value input
   const handleValueBlur = () => {
-    setIsValueFocused(false);
     // If the input is empty, set it back to 0
     if (displayValue === '' || displayValue === '.') {
       setDisplayValue('0');

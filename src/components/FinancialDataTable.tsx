@@ -75,13 +75,13 @@ const FinancialDataTable = ({ data, type }: FinancialDataTableProps) => {
             animatedData.map((item, index) => (
               <tr 
                 key={item.id} 
-                className={`hover:bg-gray-600 ${
+                className={`staggered-item hover:bg-gray-600 ${
                   type === 'expense' ? 'text-red-200' : 'text-green-200'
                 }`}
                 style={{ 
-                  animation: `fadeInRow 0.5s ease-out forwards ${index * 0.08}s`,
+                  animationDelay: `${index * 0.08}s`,
                   opacity: 0,
-                  transform: 'translateY(10px)'
+                  animation: "fadeIn 0.5s ease-out forwards"
                 }}
               >
                 <td className="py-2 px-4 border-b">
@@ -115,18 +115,26 @@ const FinancialDataTable = ({ data, type }: FinancialDataTableProps) => {
         </tbody>
       </table>
       
-      <style jsx>{`
-        @keyframes fadeInRow {
-          from {
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          
+          .staggered-item {
             opacity: 0;
-            transform: translateY(10px);
+            animation: fadeIn 0.5s ease-out forwards;
           }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
+          
+          .staggered-item:nth-child(1) { animation-delay: 0.1s; }
+          .staggered-item:nth-child(2) { animation-delay: 0.2s; }
+          .staggered-item:nth-child(3) { animation-delay: 0.3s; }
+          .staggered-item:nth-child(4) { animation-delay: 0.4s; }
+          .staggered-item:nth-child(5) { animation-delay: 0.5s; }
+          .staggered-item:nth-child(n+6) { animation-delay: 0.6s; }
+        `}
+      </style>
     </div>
   );
 };
