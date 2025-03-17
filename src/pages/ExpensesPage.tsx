@@ -40,9 +40,9 @@ const ExpensesPage = () => {
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <MainLayout>
+    <MainLayout >
       {/* Header section with responsive padding and spacing */}
-      <div className="flex flex-wrap gap-3 p-4 md:p-6 justify-between items-center mb-4">
+      <div className="max-w-7xl mx-auto flex flex-wrap gap-3 p-4 md:p-6 justify-between items-center mb-4">
         <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
           Expenses Management
         </h1>
@@ -63,17 +63,16 @@ const ExpensesPage = () => {
       )}
 
       {/* Show loading indicator while fetching tags */}
-      {isLoading ? (
+      {/* {isLoading ? (
         <div className="flex justify-center items-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
           <span className="ml-2 text-gray-600 dark:text-gray-300">Loading tags...</span>
         </div>
-      ) : (
-        /* Expenses Form */
+      ) : ( */}
         <div className="md:px-6 mb-8">
-          <ExpensesForm tags={tags} />
+            <ExpensesForm tags={tags} loading={ isLoading} />
         </div>
-      )}
+
 
       {/* Render the CategoryModal component */}
       <CategoryModal 

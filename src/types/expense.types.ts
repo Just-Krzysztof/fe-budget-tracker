@@ -39,3 +39,11 @@ export interface ExpensesStatistics {
     }
   };
 } 
+
+export interface ExpensesFilterParams {
+  year?: string | number;
+  month?: string | number;
+  type?: string;
+}
+
+export type ExpensesList = Expense[];

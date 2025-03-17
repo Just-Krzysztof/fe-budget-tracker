@@ -27,7 +27,7 @@ const DashboardPage = () => {
   return (
     <MainLayout>
       {/* Welcome section */}
-      <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg mb-6">
+      <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg mb-6 max-w-7xl mx-auto">
         <div className="px-4 py-5 sm:p-6">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white">
             User Dashboard
@@ -39,7 +39,7 @@ const DashboardPage = () => {
       </div>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3  max-w-7xl mx-auto">
         {/* Transactions card */}
         <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">

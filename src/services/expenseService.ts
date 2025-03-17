@@ -1,42 +1,7 @@
 import { httpClient } from './httpClient';
-import { Expense, ExpenseFormData, ExpensesFilter, ExpensesStatistics } from '../types/expense.types';
+import { Expense, ExpenseFormData, ExpensesList } from '../types/expense.types';
 
 export const expenseService = {
-  /**
-   * Get all expenses for the authenticated user
-   */
-  async getExpenses(filter?: ExpensesFilter): Promise<Expense[]> {
-    try {
-      // Construct query params if filter is provided
-      let queryParams = '';
-      if (filter) {
-        const params = new URLSearchParams();
-        if (filter.startDate) params.append('startDate', filter.startDate.toISOString());
-        if (filter.endDate) params.append('endDate', filter.endDate.toISOString());
-        if (filter.type) params.append('type', filter.type);
-        if (filter.tag) params.append('tag', filter.tag);
-        if (filter.currency) params.append('currency', filter.currency);
-        queryParams = `?${params.toString()}`;
-      }
-
-      return await httpClient.get<Expense[]>(`/expenses${queryParams}`);
-    } catch (error) {
-      console.error('Error fetching expenses:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * Get a single expense by ID
-   */
-  async getExpenseById(id: string): Promise<Expense> {
-    try {
-      return await httpClient.get<Expense>(`/expenses/${id}`);
-    } catch (error) {
-      console.error(`Error fetching expense with ID ${id}:`, error);
-      throw error;
-    }
-  },
 
   /**
    * Create a new expense
@@ -51,49 +16,13 @@ export const expenseService = {
   },
 
   /**
-   * Update an existing expense
+   * Get list of expenses by tag, month and year
    */
-  async updateExpense(id: string, expenseData: Partial<ExpenseFormData>): Promise<Expense> {
+  async loadListOfExpenses(year: string | number, month: string | number, type: string): Promise<ExpensesList> {
     try {
-      return await httpClient.put<Expense>(`/expenses/${id}`, expenseData);
+      return await httpClient.post<ExpensesList>(`/financialRecords/filter?year=${year}&month=${month}&type=${type}`);
     } catch (error) {
-      console.error(`Error updating expense with ID ${id}:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * Delete an expense
-   */
-  async deleteExpense(id: string): Promise<void> {
-    try {
-      await httpClient.delete(`/expenses/${id}`);
-    } catch (error) {
-      console.error(`Error deleting expense with ID ${id}:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * Get expense statistics
-   */
-  async getStatistics(filter?: ExpensesFilter): Promise<ExpensesStatistics> {
-    try {
-      // Construct query params if filter is provided
-      let queryParams = '';
-      if (filter) {
-        const params = new URLSearchParams();
-        if (filter.startDate) params.append('startDate', filter.startDate.toISOString());
-        if (filter.endDate) params.append('endDate', filter.endDate.toISOString());
-        if (filter.type) params.append('type', filter.type);
-        if (filter.tag) params.append('tag', filter.tag);
-        if (filter.currency) params.append('currency', filter.currency);
-        queryParams = `?${params.toString()}`;
-      }
-
-      return await httpClient.get<ExpensesStatistics>(`/expenses/statistics${queryParams}`);
-    } catch (error) {
-      console.error('Error fetching expense statistics:', error);
+      console.error('Error fetching list:', error);
       throw error;
     }
   }
