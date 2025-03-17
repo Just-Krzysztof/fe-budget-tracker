@@ -1,17 +1,69 @@
-import { useEffect } from 'react';
+import { useEffect,useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import MainLayout from '../components/layout/MainLayout';
+import { SummaryBox } from '../components/SummaryBox';
+import { GoGraph } from "react-icons/go";
+import { HiOutlineCurrencyDollar } from "react-icons/hi";
+import { summaryService } from '../services/summaryService';
+import { Summary } from '../types/summary.types';
+import { BsSafe } from "react-icons/bs";
 
 const DashboardPage = () => {
   const { isAuthenticated, isLoading } = useAuth();
+  const [selectedYear, setSelectedYear] = useState<number>(2025);
+  const [selectedMonth, setSelectedMonth] = useState<number>(3);
+  const [summaryData,setSummaryData]= useState<Summary>()
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 6 }, (_, i) => currentYear - i);
+
+  const months = [
+    { value: 1, label: 'January' },
+    { value: 2, label: 'February' },
+    { value: 3, label: 'March' },
+    { value: 4, label: 'April' },
+    { value: 5, label: 'May' },
+    { value: 6, label: 'June' },
+    { value: 7, label: 'July' },
+    { value: 8, label: 'August' },
+    { value: 9, label: 'September' },
+    { value: 10, label: 'October' },
+    { value: 11, label: 'November' },
+    { value: 12, label: 'December' }
+  ];
+
+  const fetchSummary = async (year: string | number = selectedYear, month: string | number = selectedMonth) => {
+    setLoading(true)
+    try {
+      const data = await summaryService.getSummaryByMonth({ year, month })
+      setSummaryData(data)
+    } catch (err) {
+      console.error('We have problem...',err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchSummary();
+},[selectedYear,selectedMonth])
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       navigate('/login');
     }
   }, [isAuthenticated, isLoading, navigate]);
+
+  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedYear(Number(e.target.value));
+  };
+
+  const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedMonth(Number(e.target.value));
+  };
 
   if (isLoading) {
     return (
@@ -26,6 +78,7 @@ const DashboardPage = () => {
 
   return (
     <MainLayout>
+      {loading ?'Loading':''}
       {/* Welcome section */}
       <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg mb-6 max-w-7xl mx-auto">
         <div className="px-4 py-5 sm:p-6">
@@ -37,104 +90,71 @@ const DashboardPage = () => {
           </p>
         </div>
       </div>
+      <div className="flex flex-row justify-between gap-4 py-5 w-full max-w-7xl mx-auto md:w-auto">
+        <h3 className='pl-3.5 first-letter:uppercase'>{summaryData?.period}</h3>
+        <div className='flex flex-row gap-4'>
+
+            <div className="w-full sm:w-auto">
+              <label htmlFor="month-select" className="block text-sm font-medium text-white mb-1">
+                Month
+              </label>
+              <select
+                id="month-select"
+                value={selectedMonth}
+                onChange={handleMonthChange}
+                className="block w-full px-3 py-2 bg-white text-gray-700 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                {months.map(month => (
+                  <option key={month.value} value={month.value}>
+                    {month.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="w-full sm:w-auto">
+              <label htmlFor="year-select" className="block text-sm font-medium text-white mb-1">
+                Year
+              </label>
+              <select
+                id="year-select"
+                value={selectedYear}
+                onChange={handleYearChange}
+                className="block w-full px-3 py-2 bg-white text-gray-700 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                {years.map(year => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+        </div>
+          </div>
 
       {/* Stats cards */}
+      {/* TODO features add currency */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3  max-w-7xl mx-auto">
         {/* Transactions card */}
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-indigo-500 rounded-md p-3">
-                <svg className="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                    Number of transactions
-                  </dt>
-                  <dd>
-                    <div className="text-lg font-medium text-gray-900 dark:text-white">
-                      24
-                    </div>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-          <div className="bg-gray-50 dark:bg-gray-700 px-4 py-4 sm:px-6">
-            <div className="text-sm">
-              <a href="#" className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
-                View all transactions
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Balance card */}
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-green-500 rounded-md p-3">
-                <svg className="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                    Balance
-                  </dt>
-                  <dd>
-                    <div className="text-lg font-medium text-gray-900 dark:text-white">
-                      5,234 USD
-                    </div>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-          <div className="bg-gray-50 dark:bg-gray-700 px-4 py-4 sm:px-6">
-            <div className="text-sm">
-              <a href="#" className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
-                View details
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Budgets card */}
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-blue-500 rounded-md p-3">
-                <svg className="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                    Active budgets
-                  </dt>
-                  <dd>
-                    <div className="text-lg font-medium text-gray-900 dark:text-white">
-                      3
-                    </div>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-          <div className="bg-gray-50 dark:bg-gray-700 px-4 py-4 sm:px-6">
-            <div className="text-sm">
-              <a href="#" className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
-                Manage budgets
-              </a>
-            </div>
-          </div>
-        </div>
+        <SummaryBox 
+          icon={GoGraph} 
+          title='Total Income' 
+          value={summaryData?.totalIncome} 
+          blurValue={true}
+        />
+        <SummaryBox 
+          icon={HiOutlineCurrencyDollar} 
+          title='Total Expanses' 
+          value={summaryData?.totalExpenses} 
+          blurValue={true}
+        />
+        <SummaryBox 
+          icon={BsSafe} 
+          title='Total Saved' 
+          value={summaryData?.totalSaved} 
+          blurValue={true}
+        />
+       
       </div>
     </MainLayout>
   );
