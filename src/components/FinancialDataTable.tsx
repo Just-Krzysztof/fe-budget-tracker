@@ -55,7 +55,7 @@ const FinancialDataTable = ({ data, type }: FinancialDataTableProps) => {
 
   return (
     <div className="overflow-x-auto">
-      <table className=" bg-gray-700">
+      <table className="w-full bg-gray-700">
         <thead className="bg-gray-800">
           <tr>
             <th className="py-2 px-4 border-b w-[40%] text-left">Description</th>
