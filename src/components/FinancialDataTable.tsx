@@ -1,14 +1,17 @@
 import { Expense } from '../types/expense.types';
 import { useEffect, useState } from 'react';
+import { expenseService } from '../services/expenseService';
 
 interface FinancialDataTableProps {
   data: Expense[];
   type: 'expense' | 'income';
+  onDataChange?: () => void; // Callback to refresh parent component when data changes
 }
 
-const FinancialDataTable = ({ data, type }: FinancialDataTableProps) => {
+const FinancialDataTable = ({ data, type, onDataChange }: FinancialDataTableProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [animatedData, setAnimatedData] = useState<Expense[]>([]);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
   
   // Simulate loading and then animate data appearing
   useEffect(() => {
@@ -53,21 +56,51 @@ const FinancialDataTable = ({ data, type }: FinancialDataTableProps) => {
     );
   };
 
+  // Handle delete expense
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this record?')) {
+      try {
+        setIsDeleting(id);
+        await expenseService.deleteExpense(id);
+        // Remove from local state to avoid having to refetch
+        setAnimatedData(prev => prev.filter(item => item.id !== id));
+        // Notify parent component of the change
+        if (onDataChange) {
+          onDataChange();
+        }
+      } catch (error) {
+        console.error('Failed to delete record:', error);
+        alert('Failed to delete record. Please try again.');
+      } finally {
+        setIsDeleting(null);
+      }
+    }
+  };
+
+  // Helper to format value safely
+  const formatValue = (value: any): string => {
+    if (typeof value === 'number') {
+      return value.toFixed(2);
+    }
+    return String(value || 0);
+  };
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full bg-gray-700">
         <thead className="bg-gray-800">
           <tr>
-            <th className="py-2 px-4 border-b w-[40%] text-left">Description</th>
-            <th className="py-2 px-4 border-b w-[20%] text-left">Amount</th>
-            <th className="py-2 px-4 border-b w-[20%] text-left">Category</th>
-            <th className="py-2 px-4 border-b w-[20%] text-left">Date</th>
+            <th className="py-2 px-4 border-b w-[35%] text-left">Description</th>
+            <th className="py-2 px-4 border-b w-[15%] text-left">Amount</th>
+            <th className="py-2 px-4 border-b w-[15%] text-left">Category</th>
+            <th className="py-2 px-4 border-b w-[15%] text-left">Date</th>
+            <th className="py-2 px-4 border-b w-[20%] text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           {isLoading ? (
             <tr>
-              <td colSpan={4} className="py-4 px-4 text-center">
+              <td colSpan={5} className="py-4 px-4 text-center">
                 <LoadingDots />
               </td>
             </tr>
@@ -78,61 +111,57 @@ const FinancialDataTable = ({ data, type }: FinancialDataTableProps) => {
                 className={`staggered-item hover:bg-gray-600 ${
                   type === 'expense' ? 'text-red-200' : 'text-green-200'
                 }`}
-                style={{ 
+                style={{
+                  animation: `fadeIn 0.3s ease-out forwards`,
                   animationDelay: `${index * 0.08}s`,
-                  opacity: 0,
-                  animation: "fadeIn 0.5s ease-out forwards"
+                  opacity: 0
                 }}
               >
+                <td className="py-2 px-4 border-b">{item.description || '-'}</td>
                 <td className="py-2 px-4 border-b">
-                  <div 
-                    className="text-ellipsis" 
-                    title={item.description}
-                  >
-                    {item.description}
+                  {formatValue(item.value)} {item.currency}
+                </td>
+                <td className="py-2 px-4 border-b">{item.tag}</td>
+                <td className="py-2 px-4 border-b">
+                  {new Date(item.date).toLocaleDateString()}
+                </td>
+                <td className="py-2 px-4 border-b text-center">
+                  <div className="flex justify-center space-x-2">
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      disabled={isDeleting === item.id}
+                      className={`text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-xs transition-colors ${
+                        isDeleting === item.id ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                      aria-label="Delete record"
+                    >
+                      {isDeleting === item.id ? 'Deleting...' : 'Delete'}
+                    </button>
                   </div>
-                </td>
-                <td className="py-2 px-4 border-b">
-                  <span className={type === 'expense' ? 'text-red-400' : 'text-green-400'}>
-                    {type === 'expense' ? '-' : '+'}{item.value} {item.currency}
-                  </span>
-                </td>
-                <td className="py-2 px-4 border-b truncate" title={item.tag}>
-                  {item.tag}
-                </td>
-                <td className="py-2 px-4 border-b">
-                  {new Date(item.date).toLocaleDateString('pl')}
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={4} className="py-4 px-4 text-center text-gray-400">
-                No {type === 'expense' ? 'expenses' : 'income'} found
+              <td colSpan={5} className="py-4 px-4 text-center">
+                No data available
               </td>
             </tr>
           )}
         </tbody>
       </table>
-      
       <style>
         {`
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          
-          .staggered-item {
+        @keyframes fadeIn {
+          from {
             opacity: 0;
-            animation: fadeIn 0.5s ease-out forwards;
+            transform: translateY(10px);
           }
-          
-          .staggered-item:nth-child(1) { animation-delay: 0.1s; }
-          .staggered-item:nth-child(2) { animation-delay: 0.2s; }
-          .staggered-item:nth-child(3) { animation-delay: 0.3s; }
-          .staggered-item:nth-child(4) { animation-delay: 0.4s; }
-          .staggered-item:nth-child(5) { animation-delay: 0.5s; }
-          .staggered-item:nth-child(n+6) { animation-delay: 0.6s; }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
         `}
       </style>
     </div>

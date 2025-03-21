@@ -25,5 +25,29 @@ export const expenseService = {
       console.error('Error fetching list:', error);
       throw error;
     }
+  },
+
+  /**
+   * Delete an expense by ID
+   */
+  async deleteExpense(id: string): Promise<void> {
+    try {
+      await httpClient.delete<void>(`/financialRecords/${id}`);
+    } catch (error) {
+      console.error('Error deleting expense:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Update an existing expense
+   */
+  async updateExpense(id: string, expenseData: Partial<ExpenseFormData>): Promise<Expense> {
+    try {
+      return await httpClient.put<Expense>(`/financialRecords/${id}`, expenseData);
+    } catch (error) {
+      console.error('Error updating expense:', error);
+      throw error;
+    }
   }
 }; 

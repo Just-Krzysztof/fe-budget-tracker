@@ -176,6 +176,7 @@ const ListPage = () => {
               <FinancialDataTable 
                 data={expensesData}
                 type="expense"
+                onDataChange={fetchData}
               />
             </div>
 
@@ -188,6 +189,7 @@ const ListPage = () => {
               <FinancialDataTable 
                 data={incomeData}
                 type="income"
+                onDataChange={fetchData}
               />
             </div>
           </div>

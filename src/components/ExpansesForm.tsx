@@ -315,7 +315,7 @@ const ExpensesForm = ({ tags = [], loading=false }: ExpensesFormProps) => {
               </label>
               <div className="relative mt-1 rounded-md shadow-sm h-[38px]">
                 <input
-                  type="text"
+                  type="number"
                   inputMode="decimal"
                   name="value"
                   id="value"
