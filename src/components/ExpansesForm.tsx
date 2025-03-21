@@ -53,7 +53,7 @@ const ExpensesForm = ({ tags = [], loading=false }: ExpensesFormProps) => {
     setFormVisible(true);
   }, []);
 
-  // Loading dots animation
+  // Loading animation setup
   useEffect(() => {
     if (loading || isSubmitting) {
       const interval = setInterval(() => {
@@ -216,16 +216,18 @@ const ExpensesForm = ({ tags = [], loading=false }: ExpensesFormProps) => {
     return typeof tag === 'object' && tag !== null && 'name' in tag;
   };
 
+  // Mini spinner component for reuse in the form
+  const MiniSpinner = () => (
+    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-yellow-500 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+  );
+
   const renderTagOptions = () => {
     const options = [
       <option key="empty" value="">
-        {loading ? (
-          <span className="text-yellow-500 inline-flex items-center">
-            Loading<span className="inline-block w-8 overflow-hidden">{loadingDots}</span>
-          </span>
-        ) : (
-          'Select Category'
-        )}
+        {loading ? `Loading${loadingDots}` : 'Select Category'}
       </option>
     ];
     
@@ -411,6 +413,12 @@ const ExpensesForm = ({ tags = [], loading=false }: ExpensesFormProps) => {
           <div className="transition-all duration-300 transform hover:scale-[1.02]">
             <label htmlFor="tag" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Category
+              {loading && (
+                <span className="ml-2 inline-flex items-center">
+                  <MiniSpinner />
+                  Loading{loadingDots}
+                </span>
+              )}
             </label>
 
             <select
@@ -460,6 +468,7 @@ const ExpensesForm = ({ tags = [], loading=false }: ExpensesFormProps) => {
             >
               {isSubmitting ? (
                 <span className="inline-flex items-center">
+                  <MiniSpinner />
                   Submitting<span className="inline-block w-8 overflow-hidden">{loadingDots}</span>
                 </span>
               ) : (

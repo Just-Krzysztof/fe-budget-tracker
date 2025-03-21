@@ -7,5 +7,13 @@ export interface Summary {
     totalIncome: number,
     totalExpenses: number,
     totalSaved?: number,
-    period?: string
+    period?: string,
+    currencies: Currencies[]
+}
+
+export interface Currencies {
+    currency: string,
+    income: number,
+    expenses: number,
+    saved: number
 }

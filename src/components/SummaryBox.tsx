@@ -5,13 +5,15 @@ interface SummaryBoxProps {
     value?: number;
     icon?: ElementType;
     blurValue?: boolean;
+    currency?: string;
 }
 
 export const SummaryBox = ({
   title, 
   value, 
   icon: Icon,
-  blurValue = true
+  blurValue = true,
+  currency
 }: SummaryBoxProps) => {
     const [isBlurred, setIsBlurred] = useState(blurValue);
     
@@ -47,7 +49,7 @@ export const SummaryBox = ({
                     {value !== undefined && (
                       <>
                         <span className={isBlurred ? 'blur-sm' : ''}>
-                          {value}
+                          {value} {currency}
                         </span>
                         {isBlurred && (
                           <span className="absolute inset-0 flex items-center justify-center text-xs text-gray-500">

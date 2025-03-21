@@ -6,7 +6,7 @@ import { SummaryBox } from '../components/SummaryBox';
 import { GoGraph } from "react-icons/go";
 import { HiOutlineCurrencyDollar } from "react-icons/hi";
 import { summaryService } from '../services/summaryService';
-import { Summary } from '../types/summary.types';
+import { Currencies, Summary } from '../types/summary.types';
 import { BsSafe } from "react-icons/bs";
 
 const DashboardPage = () => {
@@ -40,6 +40,7 @@ const DashboardPage = () => {
     try {
       const data = await summaryService.getSummaryByMonth({ year, month })
       setSummaryData(data)
+      console.log('Summary data:', data);
     } catch (err) {
       console.error('We have problem...',err)
     } finally {
@@ -134,26 +135,38 @@ const DashboardPage = () => {
 
       {/* Stats cards */}
       {/* TODO features add currency */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3  max-w-7xl mx-auto">
+      <div className="">
         {/* Transactions card */}
-        <SummaryBox 
-          icon={GoGraph} 
-          title='Total Income' 
-          value={summaryData?.totalIncome} 
-          blurValue={true}
-        />
-        <SummaryBox 
-          icon={HiOutlineCurrencyDollar} 
-          title='Total Expanses' 
-          value={summaryData?.totalExpenses} 
-          blurValue={true}
-        />
-        <SummaryBox 
-          icon={BsSafe} 
-          title='Total Saved' 
-          value={summaryData?.totalSaved} 
-          blurValue={true}
-        />
+        {summaryData?.currencies.map((item: Currencies) => {
+          return (
+            <div key={item.currency} className='max-w-7xl mx-auto'>
+              <h4 className='text-lg py-5 font-medium text-gray-900 dark:text-white'>Summary by {item?.currency}</h4>
+              <div className='grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'>
+                <SummaryBox 
+                  icon={GoGraph} 
+                  currency={item?.currency}
+                  title='Total Income' 
+                  value={item?.income} 
+                  blurValue={true}
+                />
+                <SummaryBox 
+                  icon={HiOutlineCurrencyDollar} 
+                  currency={item?.currency}
+                  title='Total Expanses' 
+                  value={item?.expenses} 
+                  blurValue={true}
+                />
+                <SummaryBox 
+                  icon={BsSafe} 
+                  currency={item?.currency}
+                  title='Total Saved' 
+                  value={item?.saved} 
+                  blurValue={true}
+                />
+              </div>
+            </div>
+          )
+        })}
        
       </div>
     </MainLayout>
