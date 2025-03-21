@@ -66,8 +66,8 @@ class AuthService {
       localStorage.setItem(this.REFRESH_TOKEN_KEY, (response as AuthResponse & { refresh_token: string }).refresh_token);
     }
     
-    // Calculate and store token expiry (default to 1 hour if not provided)
-    const expiresIn = (response as AuthResponse & { expires_in?: number }).expires_in || 3600; // seconds
+    // Calculate and store token expiry (default to 1 week if not provided)
+    const expiresIn = (response as AuthResponse & { expires_in?: number }).expires_in || 604800; // 7 days in seconds (7*24*60*60)
     const expiryTime = Date.now() + expiresIn * 1000;
     localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiryTime.toString());
   }
