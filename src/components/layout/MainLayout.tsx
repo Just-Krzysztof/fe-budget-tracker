@@ -1,7 +1,7 @@
 import { ReactNode, useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { FiChevronDown, FiUser, FiLogOut, FiSettings } from 'react-icons/fi';
+import { FiChevronDown, FiLogOut } from 'react-icons/fi';
 
 interface MainLayoutProps {
   children: ReactNode;
