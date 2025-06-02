@@ -1,14 +1,18 @@
-import { MainLayout } from './layouts/MainLayout';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-function App() {
+import { MainLayout } from './layouts/MainLayout.tsx';
+import { DashboardPage } from './pages/DashboardPage/DashboardPage';
+import { SettingsPage } from './pages/SettingsPage/SettingsPage';
+
+export default function App() {
   return (
-    <>
-      <MainLayout>
-        <h2>test</h2>
-        <p>sadsa</p>
-      </MainLayout>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
