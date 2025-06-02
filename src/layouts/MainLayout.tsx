@@ -1,4 +1,4 @@
-import { type ReactNode  } from 'react';
+import { type ReactNode } from 'react';
 interface MainLayoutProps {
   children: ReactNode;
 }
@@ -13,9 +13,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 bg-gray-100 p-6">
-        {children}
-      </main>
+      <main className="flex-1 bg-gray-100 p-6">{children}</main>
     </div>
   );
 }
