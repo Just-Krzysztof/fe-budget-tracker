@@ -1,12 +1,12 @@
 // src/layouts/MainLayout.tsx
 import { NavLink, Outlet } from 'react-router-dom';
 
-export function MainLayout() {
+export const MainLayout = () => {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
       <aside className="w-64 bg-gray-800 text-white p-6">
-        <h2 className="text-xl font-bold">My App</h2>
+        <h2 className="text-xl font-bold">Budget Tracker v2</h2>
         <nav className="mt-8 space-y-4">
           <NavLink
             to="/"
@@ -15,7 +15,6 @@ export function MainLayout() {
             }
           >
             Dashboard
-            {/* className="block text-gray-300 hover:text-white" */}
           </NavLink>
           <NavLink
             to="/settings"
@@ -29,10 +28,15 @@ export function MainLayout() {
         </nav>
       </aside>
 
-      {/* Main */}
-      <main className="flex-1 bg-gray-100 p-6">
-        <Outlet />
-      </main>
+      <div className="flex-1 flex flex-col">
+        <header className="flex flex-row-reverse w-full h-16 bg-white shadow p-4 items-center justify-between">
+          {/* avatar */}
+          <div className="text-gray-800 text-lg font-semibold">UserName</div>
+        </header>
+        <main className="flex-1 w-full bg-gray-100 p-6">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
-}
+};
