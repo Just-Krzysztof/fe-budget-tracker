@@ -17,6 +17,14 @@ export const MainLayout = () => {
             Dashboard
           </NavLink>
           <NavLink
+            to="/goals"
+            className={({ isActive }) =>
+              isActive ? 'block text-gray-300' : 'block text-gray-500'
+            }
+          >
+            Goals
+          </NavLink>
+          <NavLink
             to="/settings"
             className={({ isActive }) =>
               isActive ? 'block text-gray-300' : 'block text-gray-500'
@@ -33,7 +41,7 @@ export const MainLayout = () => {
           {/* avatar */}
           <div className="text-gray-800 text-lg font-semibold">UserName</div>
         </header>
-        <main className="flex-1 w-full bg-gray-100 p-6">
+        <main className="flex-1 w-full bg-gray-100">
           <Outlet />
         </main>
       </div>

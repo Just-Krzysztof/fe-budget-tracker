@@ -1,5 +1,4 @@
 // src/pages/SettingsPage/SettingsPage.tsx
-import React from 'react';
 
 export const SettingsPage = () => {
   return (
