@@ -10,7 +10,7 @@ import {
 import type { TooltipProps } from 'recharts';
 
 type ChartData = {
-  name: 'Income' | 'Expanses' | 'Saved' | string;
+  name: 'INCOME' | 'EXPANSES' | 'SAVING' | string;
   value: number;
   currency: string;
   month?: number;
@@ -38,11 +38,11 @@ const CustomTooltip = ({
 
 const getBarColor = (name?: string) => {
   switch (name) {
-    case 'Income':
+    case 'INCOME':
       return '#0088FE';
-    case 'Expanses':
+    case 'EXPANSES':
       return '#00C49F';
-    case 'Saved':
+    case 'SAVING':
       return '#FFBB28';
     default:
       return '#8884d8';
