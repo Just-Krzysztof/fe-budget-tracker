@@ -6,6 +6,14 @@ interface GoalData {
   name: string;
 }
 
+interface MonthlySummary {
+  month: number;
+  year: number;
+  incomeSum: number;
+  expenseSum: number;
+  saveSum: number;
+}
+
 interface BoxProps {
   data?: GoalData;
   type?: 'goal' | 'add';

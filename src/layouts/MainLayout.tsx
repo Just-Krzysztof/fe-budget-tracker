@@ -60,6 +60,17 @@ export const MainLayout = () => {
             Dashboard
           </NavLink>
           <NavLink
+            to="/transactions"
+            className={({ isActive }) =>
+              isActive
+                ? 'block text-gray-300'
+                : 'block text-gray-500 hover:text-gray-300'
+            }
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            Transactions
+          </NavLink>
+          <NavLink
             to="/goals"
             className={({ isActive }) =>
               isActive
