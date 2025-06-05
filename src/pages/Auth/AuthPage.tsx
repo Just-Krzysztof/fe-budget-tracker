@@ -1,10 +1,14 @@
-import { LoginPage } from './components/LoginForm';
+import { LoginForm } from './components/LoginForm';
+import { RegisterForm } from './components/RegisterForm';
 
 export const AuthPage = () => {
   return (
     <>
-      <h1>Login</h1>
-      <LoginPage></LoginPage>
+      <div className="flex flex-col">
+        <h1>Login</h1>
+        <LoginForm></LoginForm>
+        <RegisterForm></RegisterForm>
+      </div>
     </>
   );
 };

@@ -1,7 +1,7 @@
 import { useAuth } from '../../../hooks/useAuth';
 import type { LoginCredentials } from '../../../types/auth.types';
 
-export const LoginPage = () => {
+export const LoginForm = () => {
   const { login, isLoading, error } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -18,8 +18,8 @@ export const LoginPage = () => {
   return (
     <form onSubmit={handleSubmit}>
       {error && <div className="error">{error.message}</div>}
-      <input type="email" name="email" required />
-      <input type="password" name="password" required />
+      {/* <input type="email" name="email" required />
+      <input type="password" name="password" required /> */}
       <button type="submit" disabled={isLoading}>
         {isLoading ? 'Logging in...' : 'Login'}
       </button>
