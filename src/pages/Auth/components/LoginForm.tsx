@@ -1,28 +1,39 @@
 import { useAuth } from '../../../hooks/useAuth';
 import type { LoginCredentials } from '../../../types/auth.types';
+import { Input } from '../../../components/Form/Input';
+import { useForm } from 'react-hook-form';
+import { Submit } from '../../../components/Form/Submit';
 
 export const LoginForm = () => {
   const { login, isLoading, error } = useAuth();
+  const { register, handleSubmit } = useForm<LoginCredentials>();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-
-    const credentials: LoginCredentials = {
-      email: formData.get('email') as string,
-      password: formData.get('password') as string,
-    };
-    login(credentials);
+  const onSubmit = async (data: LoginCredentials) => {
+    login(data);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col gap-4 mx-auto w-xs"
+    >
       {error && <div className="error">{error.message}</div>}
-      {/* <input type="email" name="email" required />
-      <input type="password" name="password" required /> */}
-      <button type="submit" disabled={isLoading}>
-        {isLoading ? 'Logging in...' : 'Login'}
-      </button>
+
+      <Input
+        inputName="email"
+        label="Email"
+        inputType="email"
+        required
+        {...register('email')}
+      />
+      <Input
+        inputName="password"
+        label="Password"
+        inputType="password"
+        required
+        {...register('password')}
+      />
+     <Submit type="submit" name="Send" disabled={isLoading} />
     </form>
   );
 };

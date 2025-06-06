@@ -47,9 +47,9 @@ export const RegisterForm = () => {
         {...register('currency')}
       />
       <Submit type="submit" name="Send" disabled={isLoading} />
-      <button type="submit" disabled={isLoading}>
+      {/* <button type="submit" disabled={isLoading}>
         {isLoading ? 'Logging in...' : 'Login'}
-      </button>
+      </button> */}
     </form>
   );
 };
