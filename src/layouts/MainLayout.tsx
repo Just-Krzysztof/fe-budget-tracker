@@ -9,20 +9,21 @@ export const MainLayout = () => {
     <div className="flex min-h-screen bg-gray-100">
       {isSidebarOpen && (
         <div
-          className="fixed inset-0  bg-opacity-50 z-40 md:hidden"
+          className="fixed inset-0 bg-opacity-50 z-40 md:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       <aside
         className={`
-          fixed md:static
+          fixed md:fixed
           top-0 left-0
-         w-80 md:w-64 lg:w-64 overflow-hidden
+          h-full
+          w-80 md:w-64 lg:w-64
           bg-gray-800 text-white p-6
           transform transition-transform duration-200 ease-in-out
           z-50
-          ${isSidebarOpen ? 'translate-x-0 h-full' : '-translate-x-full md:translate-x-0 min-h-full'}
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}
         aria-hidden={!isSidebarOpen && window.innerWidth < 768}
       >
@@ -95,15 +96,15 @@ export const MainLayout = () => {
         </nav>
       </aside>
 
-      <div className="flex-1 relative flex flex-col overflow-hidden max-w-screen-xl">
-        <header className="flex fixed left-0 top-0 flex-reverse w-full h-16 bg-white shadow p-4 items-center justify-between z-20">
+      <div className="flex-1 flex flex-col md:ml-64 lg:ml-64">
+        <header className="sticky top-0 w-full h-16 bg-white shadow p-4 flex items-center justify-between z-20">
           <button
             onClick={() => setIsSidebarOpen((prev) => !prev)}
             aria-label={
               isSidebarOpen ? 'Zamknij menu boczne' : 'Otwórz menu boczne'
             }
             aria-expanded={isSidebarOpen}
-            className="md:visibility-none  p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring"
+            className=" md:invisible p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring"
           >
             <svg
               className="h-6 w-6"
@@ -126,8 +127,7 @@ export const MainLayout = () => {
           {/* avatar */}
           <div className="text-gray-800 text-lg font-semibold">UserName</div>
         </header>
-        {/* Main content - dodajemy overflow-auto */}
-        <main className="flex-1 w-full bg-gray-100 overflow-auto">
+        <main className="flex-1 w-full bg-gray-100 overflow-y-auto">
           <Outlet />
         </main>
       </div>
