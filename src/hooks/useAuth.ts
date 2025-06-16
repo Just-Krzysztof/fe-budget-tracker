@@ -1,5 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApi } from '../api/auth.api';
+import { useNavigate } from 'react-router-dom';
+import { authStorage } from '../utils/auth';
 // import type {
 //   LoginCredentials,
 //   RegisterCredentials,
@@ -8,57 +10,69 @@ import { authApi } from '../api/auth.api';
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
-  const token = localStorage.getItem('token');
+  const navigate = useNavigate();
+  const token = authStorage.getToken();
+  const user = queryClient.getQueryData(['user']);
 
-  // Query do sprawdzania stanu autoryzacji
-  const { data: user, isLoading: isCheckingAuth } = useQuery({
-    queryKey: ['user'],
-    queryFn: async () => {
-      if (!token) return null;
-      try {
-        return await authApi.me(token);
-      } catch {
-        localStorage.removeItem('token');
-        return null;
-      }
-    },
-    enabled: !!token, // query wykona się tylko jeśli jest token
-    staleTime: 1000 * 60 * 5, // 5 minut
+  console.log('Current state:', {
+    token: !!token,
+    user,
+    isTokenValid: authStorage.isAuthenticated(),
+    isUserInCache: !!user,
   });
 
   const login = useMutation({
     mutationFn: authApi.login,
     onSuccess: (data) => {
-      localStorage.setItem('token', data.token);
+      console.log('Login success, data:', data);
+      authStorage.setToken(data.accessToken);
+      // Upewnijmy się, że dane użytkownika są poprawnie zapisywane
       queryClient.setQueryData(['user'], data.user);
+      console.log('After setting data:', {
+        token: authStorage.getToken(),
+        user: queryClient.getQueryData(['user']),
+      });
     },
   });
 
   const register = useMutation({
     mutationFn: authApi.register,
     onSuccess: (data) => {
-      localStorage.setItem('token', data.token);
+      console.log('Register success, data:', data);
+      authStorage.setToken(data.accessToken);
       queryClient.setQueryData(['user'], data.user);
     },
   });
 
   const logout = useMutation({
-    mutationFn: authApi.logout,
-    onSuccess: () => {
-      localStorage.removeItem('token');
-      queryClient.clear();
+    mutationFn: async () => {
+      try {
+        await authApi.logout();
+      } finally {
+        authStorage.clear();
+        queryClient.clear();
+        navigate('/auth/login');
+      }
     },
+  });
+
+  // Dodajmy więcej logów do debugowania
+  const isAuthenticated = authStorage.isAuthenticated() && !!user;
+  console.log('Auth state:', {
+    hasToken: authStorage.isAuthenticated(),
+    hasUser: !!user,
+    isAuthenticated,
   });
 
   return {
     // Stan autoryzacji
     user,
-    isAuthenticated: !!user,
-    isLoading: isCheckingAuth || login.isPending || register.isPending,
+    isAuthenticated,
+    isLoading: login.isPending || register.isPending,
 
     // Akcje
-    login: login.mutate,
-    register: register.mutate,
+    login: login.mutateAsync,
+    register: register.mutateAsync,
     logout: logout.mutate,
 
     // Błędy

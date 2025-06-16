@@ -9,7 +9,7 @@ export interface RegisterCredentials extends LoginCredentials {
 }
 
 export interface AuthResponse {
-  token: string;
+  accessToken: string;
   user: {
     id: string;
     email: string;

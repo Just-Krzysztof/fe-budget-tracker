@@ -5,6 +5,7 @@ interface InputProps {
   label?: string;
   required?: boolean;
   className?: string;
+  error?: string;
 }
 
 export const Input = ({
@@ -13,6 +14,7 @@ export const Input = ({
   placeholder = 'Type here...',
   label = 'Type here...',
   required,
+  error,
   ...rest
 }: InputProps) => {
   return (
@@ -28,6 +30,7 @@ export const Input = ({
         required={required}
         {...rest}
       />
+      {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
     </div>
   );
 };

@@ -1,19 +1,18 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { MainLayout } from './layouts/MainLayout.tsx';
-import { AuthLayout } from './layouts/AuthLayout.tsx';
+import { MainLayout } from './layouts/MainLayout';
 import { DashboardPage } from './pages/DashboardPage/DashboardPage';
 import { SettingsPage } from './pages/SettingsPage/SettingsPage';
 import { GoalsPage } from './pages/GoalsPage/GoalsPage.tsx';
 import { TransactionsPage } from './pages/TransactionsPage/TransactionsPage.tsx';
-import { ProtectedRoute } from './components/ProtectedRoute.tsx';
-import { AuthPage } from './pages/Auth/AuthPage.tsx';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { AuthPage } from './pages/Auth/AuthPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // Czas 5 min
+      staleTime: 1000 * 60 * 5, // 5 minut
       retry: 1,
     },
   },
@@ -24,10 +23,10 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
-          <Route element={<AuthLayout />} path="/auth/*">
-            <Route path="authorization" element={<AuthPage />} />
-          </Route>
+          {/* Publiczne routy */}
+          <Route path="/auth/*" element={<AuthPage />} />
 
+          {/* Chronione routy */}
           <Route
             element={
               <ProtectedRoute>
@@ -36,9 +35,9 @@ export default function App() {
             }
           >
             <Route path="/" element={<DashboardPage />} />
-            <Route path="goals" element={<GoalsPage />} />
-            <Route path="transactions" element={<TransactionsPage />} />
-            <Route path="settings" element={<SettingsPage />} />
+            <Route path="/transactions" element={<TransactionsPage />} />
+            <Route path="/goals" element={<GoalsPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
