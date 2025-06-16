@@ -56,23 +56,23 @@ export const Tabs = ({
   return (
     <div className="w-full">
       {title && (
-        <h1 className="text-2xl font-bold mb-6 first-letter:uppercase text-center">
+        <h1 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6 first-letter:uppercase text-center">
           {activeTab}
         </h1>
       )}
       <div className="relative">
         <ul
-          className="relative flex flex-wrap px-1.5 py-1.5 list-none rounded-lg bg-slate-100 shadow-sm"
+          className="relative flex flex-wrap gap-0.5 sm:gap-1 px-1 sm:px-1.5 py-1 sm:py-1.5 list-none rounded-lg bg-slate-100 shadow-sm"
           role="tablist"
         >
           {tabs.map((tab) => (
-            <li key={tab.id} className="z-30 flex-auto text-center">
+            <li key={tab.id} className="z-30 flex-auto text-center min-w-[80px] sm:min-w-[100px]">
               <button
                 onClick={() => setActiveTab(tab.id)}
                 className={`
-                  z-30 flex items-center justify-center w-full px-0 py-2.5 text-sm 
+                  z-30 flex items-center justify-center w-full px-1 sm:px-0 py-2 sm:py-2.5 text-xs sm:text-sm
                   transition-all duration-200 ease-in-out border-0 rounded-md 
-                  cursor-pointer
+                  cursor-pointer whitespace-nowrap
                   ${
                     activeTab === tab.id
                       ? 'text-blue-600 bg-white shadow-sm font-medium'
@@ -90,7 +90,7 @@ export const Tabs = ({
       </div>
 
       {/* Tab Content */}
-      <div className="relative mt-6">
+      <div className="relative mt-4 sm:mt-6">
         {tabs.map((tab) => (
           <div
             key={tab.id}

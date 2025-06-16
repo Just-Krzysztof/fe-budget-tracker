@@ -15,7 +15,7 @@ export const LoginForm = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-4 mx-auto w-xs"
+      className="flex flex-col gap-4 w-full max-w-md px-4 sm:px-6 mx-auto"
     >
       {error && <div className="error">{error.message}</div>}
 
