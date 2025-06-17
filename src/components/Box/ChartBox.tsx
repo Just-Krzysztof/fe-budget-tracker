@@ -66,18 +66,20 @@ export const ChartBox = ({
   return (
     <div className="p-4 rounded-xl shadow-lg">
       {title && <h3 className="text-lg font-semibold mb-2">{title}</h3>}
-      <ResponsiveContainer width={375} height={175}>
-        <BarChart
-          data={coloredData}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip content={<CustomTooltip />} />
-          <Bar dataKey="value" fill="#8884d8" />
-        </BarChart>
-      </ResponsiveContainer>
+      <div className="w-[375px] h-[175px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={coloredData}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip content={<CustomTooltip />} />
+            <Bar dataKey="value" fill="#8884d8" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };
