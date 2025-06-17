@@ -10,31 +10,26 @@ export const ColorGenerator = ({
   onColorChange,
 }: ColorGeneratorProps) => {
   const presetColors = [
-    { name: 'Blue', bg: '#3b82f6', text: '#ffffff' },
-    { name: 'Green', bg: '#10b981', text: '#ffffff' },
-    { name: 'Red', bg: '#ef4444', text: '#ffffff' },
-    { name: 'Purple', bg: '#8b5cf6', text: '#ffffff' },
-    { name: 'Orange', bg: '#f97316', text: '#ffffff' },
-    { name: 'Gray', bg: '#6b7280', text: '#ffffff' },
-  ];
-
-  const randomColors = [
-    { bg: '#3b82f6', text: '#ffffff' },
-    { bg: '#10b981', text: '#ffffff' },
-    { bg: '#ef4444', text: '#ffffff' },
-    { bg: '#8b5cf6', text: '#ffffff' },
-    { bg: '#f97316', text: '#ffffff' },
-    { bg: '#06b6d4', text: '#ffffff' },
-    { bg: '#84cc16', text: '#ffffff' },
-    { bg: '#f59e0b', text: '#ffffff' },
-    { bg: '#ec4899', text: '#ffffff' },
-    { bg: '#6366f1', text: '#ffffff' },
+    { name: 'blue', bg: '#3b82f6', text: '#ffffff' },
+    { name: 'green', bg: '#10b981', text: '#ffffff' },
+    { name: 'red', bg: '#ef4444', text: '#ffffff' },
+    { name: 'purple', bg: '#8b5cf6', text: '#ffffff' },
+    { name: 'orange', bg: '#f97316', text: '#ffffff' },
+    { name: 'gray', bg: '#6b7280', text: '#ffffff' },
   ];
 
   const generateRandomColor = () => {
-    const randomColor =
-      randomColors[Math.floor(Math.random() * randomColors.length)];
-    onColorChange(randomColor.bg, randomColor.text);
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+
+    const bgColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+    const textColor = brightness > 128 ? '#000000' : '#ffffff';
+
+    onColorChange(bgColor, textColor);
   };
 
   return (
@@ -96,7 +91,7 @@ export const ColorGenerator = ({
           <button
             key={color.name}
             type="button"
-            className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+            className={`px-3 py-1 text-xs bg-${color.name}-500 text-white rounded hover:bg-${color.name}-600 first-letter:uppercase`}
             onClick={() => onColorChange(color.bg, color.text)}
           >
             {color.name}
