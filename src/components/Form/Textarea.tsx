@@ -23,12 +23,15 @@ export const Textarea = ({
   cols,
   maxLength,
   minLength,
+  className,
   readOnly,
   disabled,
   ...rest
 }: TextareaProps) => {
   return (
-    <div className="w-full max-w-xs bg-white rounded-lg font-mono">
+    <div
+      className={`w-full max-w-xs bg-white rounded-lg font-mono ${className}`}
+    >
       <label className="block text-gray-600 text-sm font-bold mb-2">
         {label}
       </label>

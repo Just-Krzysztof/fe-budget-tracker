@@ -1,9 +1,9 @@
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { transactionSchema } from '../types/transaction';
 
 export const useTransactionForm = () => {
-  return useForm({
+  const form = useForm({
     resolver: zodResolver(transactionSchema),
     mode: 'onChange',
     defaultValues: {
@@ -12,6 +12,18 @@ export const useTransactionForm = () => {
       date: new Date(),
       currency: 'PLN',
       description: '',
+      tag: '',
+      tagName: '',
+      goal: '',
     },
   });
+
+  const tagValue = useWatch({ control: form.control, name: 'tag' });
+  const goalValue = useWatch({ control: form.control, name: 'goal' });
+
+  return {
+    ...form,
+    tagValue,
+    goalValue,
+  };
 };

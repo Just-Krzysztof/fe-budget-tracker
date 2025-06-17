@@ -3,13 +3,12 @@ import { ChartBox } from '../../components/Box/ChartBox';
 import { Modal } from '../../components/Modal/Modal';
 import Table from '../../components/Table/Table';
 import type { TableColumn } from '../../components/Table/Table';
-import { SquarePlus } from 'lucide-react';
+import { SquarePlus, ArrowLeftToLine } from 'lucide-react';
 import { useState } from 'react';
-import { Input } from '../../components/Form/Input';
-import { Submit } from '../../components/Form/Submit';
 import { useTransactionForm } from './hooks/useTransactionForm';
 import type { Transaction as TransactionFormData } from './types/transaction';
-import { Textarea } from '../../components/Form/Textarea';
+import { TransactionForm } from '../../components/TransactionForm/TransactionForm';
+import { TagForm } from '../../components/TagForm/TagForm';
 
 enum TransactionType {
   INCOME = 'INCOME',
@@ -254,29 +253,30 @@ const columns: TableColumn<Transaction>[] = [
 
 export const TransactionsPage = () => {
   const [showModal, setShowModal] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isValid },
-    reset,
-  } = useTransactionForm();
+  const [showTagModal, setShowTagModal] = useState(false);
+  const [tagFormData, setTagFormData] = useState({
+    tagName: '',
+    colorBg: '#3b82f6',
+    colorText: '#ffffff',
+  });
+
+  const form = useTransactionForm();
 
   const onSubmit = (data: TransactionFormData) => {
     console.log('Transaction data:', data);
-    // here to api
-    reset();
+    form.reset();
     setShowModal(false);
   };
 
-  const handleCloseModal = () => {
-    reset();
-    setShowModal(false);
+  const handleTagSubmit = (data: typeof tagFormData) => {
+    console.log('New tag data:', data);
+    setShowTagModal(false);
   };
 
   return (
     <div className="p-6">
       <h1 className="text-2xl flex items-center font-bold">
-        Transactions{' '}
+        Transactions
         <button
           className="hover:text-green-600 transition-colors cursor-pointer"
           onClick={() => setShowModal((action) => !action)}
@@ -299,88 +299,35 @@ export const TransactionsPage = () => {
       </div>
       <Modal
         show={showModal}
-        setShow={handleCloseModal}
+        setShow={() => setShowModal(false)}
         alignment="center"
-        width="w-[24rem]"
         isIntercepting={true}
         showCancelBtnINSmallDevice={true}
+        isTitle={!showTagModal ? 'Add New Transaction' : 'Add New Tag'}
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-6">
-          <h2 className="text-xl font-bold mb-4">Add New Transaction</h2>
-
-          <Input
-            inputName="amount"
-            inputType="number"
-            label="Amount"
-            placeholder="Enter amount..."
-            required
-            error={errors.amount?.message}
-            {...register('amount')}
+        {!showTagModal ? (
+          <TransactionForm
+            form={form}
+            onSubmit={onSubmit}
+            onAddTag={() => setShowTagModal(true)}
+            tagValue={form.tagValue}
+            goalValue={form.goalValue}
           />
-
-          <Textarea
-            textareaName="description"
-            label="Opis transakcji"
-            placeholder="Enter description..."
-            rows={3}
-            maxLength={500}
-            required
-            error={errors.description?.message}
-            {...register('description')}
-          />
-
-          <div className="w-full max-w-xs bg-white rounded-lg font-mono">
-            <label className="block text-gray-600 text-sm font-bold mb-2">
-              Type
-            </label>
-            <select
-              className="text-sm custom-input w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm transition duration-300 ease-in-out transform focus:-translate-y-1 focus:outline-blue-300 hover:shadow-lg hover:border-blue-300 bg-gray-50"
-              {...register('type')}
+        ) : (
+          <>
+            <button
+              className="flex gap-2 justify-center border-1 py-1 px-2 rounded-2xl border-gray-400 cursor-pointer text-xs"
+              onClick={() => setShowTagModal(false)}
             >
-              <option value="INCOME">Income</option>
-              <option value="EXPANSE">Expense</option>
-              <option value="SAVING">Saving</option>
-            </select>
-            {errors.type && (
-              <p className="mt-1 text-sm text-red-500">{errors.type.message}</p>
-            )}
-          </div>
-
-          <div className="w-full max-w-xs bg-white rounded-lg font-mono">
-            <label className="block text-gray-600 text-sm font-bold mb-2">
-              Currency
-            </label>
-            <select
-              className="text-sm custom-input w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm transition duration-300 ease-in-out transform focus:-translate-y-1 focus:outline-blue-300 hover:shadow-lg hover:border-blue-300 bg-gray-50"
-              {...register('currency')}
-            >
-              <option value="PLN">PLN</option>
-              <option value="EUR">EUR</option>
-              <option value="USD">USD</option>
-            </select>
-            {errors.type && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.currency?.message}
-              </p>
-            )}
-          </div>
-
-          <div className="w-full max-w-xs bg-white rounded-lg font-mono">
-            <label className="block text-gray-600 text-sm font-bold mb-2">
-              Date
-            </label>
-            <input
-              type="date"
-              className="text-sm custom-input w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm transition duration-300 ease-in-out transform focus:-translate-y-1 focus:outline-blue-300 hover:shadow-lg hover:border-blue-300 bg-gray-50"
-              {...register('date', { valueAsDate: true })}
+              <ArrowLeftToLine size={18} /> back
+            </button>
+            <TagForm
+              formData={tagFormData}
+              onFormDataChange={setTagFormData}
+              onSubmit={handleTagSubmit}
             />
-            {errors.date && (
-              <p className="mt-1 text-sm text-red-500">{errors.date.message}</p>
-            )}
-          </div>
-
-          <Submit type="submit" name="Add Transaction" disabled={!isValid} />
-        </form>
+          </>
+        )}
       </Modal>
     </div>
   );

@@ -8,6 +8,7 @@ import { GoalsPage } from './pages/GoalsPage/GoalsPage.tsx';
 import { TransactionsPage } from './pages/TransactionsPage/TransactionsPage.tsx';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthPage } from './pages/Auth/AuthPage';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,6 +42,7 @@ export default function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

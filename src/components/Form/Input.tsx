@@ -6,6 +6,7 @@ interface InputProps {
   required?: boolean;
   className?: string;
   error?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const Input = ({
@@ -14,11 +15,15 @@ export const Input = ({
   placeholder = 'Type here...',
   label = 'Type here...',
   required,
+  className,
   error,
+  onChange,
   ...rest
 }: InputProps) => {
   return (
-    <div className="w-full max-w-xs bg-white rounded-lg font-mono">
+    <div
+      className={`w-full max-w-xs bg-white rounded-lg font-mono ${className}`}
+    >
       <label className="block text-gray-600 text-sm font-bold mb-2">
         {label}
       </label>
@@ -28,6 +33,7 @@ export const Input = ({
         type={inputType}
         name={inputName}
         required={required}
+        onChange={onChange}
         {...rest}
       />
       {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
