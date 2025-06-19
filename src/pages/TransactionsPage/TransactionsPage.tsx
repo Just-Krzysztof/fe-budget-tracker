@@ -11,6 +11,7 @@ import { TransactionForm } from '../../components/TransactionForm/TransactionFor
 import { TagForm } from '../../components/TagForm/TagForm';
 import { useTags } from '../../hooks/useTags';
 import { authStorage } from '../../utils/auth';
+import { useAuth } from '../../hooks/useAuth';
 
 enum TransactionType {
   INCOME = 'INCOME',
@@ -175,8 +176,8 @@ const transactionResponse: Transaction[] = [
 //     </span>
 //   </div>
 // );
-
-const userId = authStorage?.getUser()?.id;
+const { user } = useAuth();
+const userId = user?.id;
 
 const TypeCell = ({ type }: { type: TransactionType }) => {
   const getTypeColor = (type: TransactionType) => {
@@ -295,6 +296,8 @@ export const TransactionsPage = () => {
     }
   };
 
+  const { user } = useAuth();
+  const userId = user?.id;
   return (
     <div className="p-6">
       <h1 className="text-2xl flex items-center font-bold">

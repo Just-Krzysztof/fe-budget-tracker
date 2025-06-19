@@ -3,8 +3,20 @@ import { authApi } from '../api/auth.api';
 import { useNavigate } from 'react-router-dom';
 import { authStorage } from '../utils/auth';
 import { parseJwt } from '../utils/parseJwt';
+import type { User } from '../utils/auth';
 
-export const useAuth = () => {
+export const useAuth = (): {
+  user?: User;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: typeof login.mutateAsync;
+  register: typeof register.mutateAsync;
+  logout: typeof logout.mutate;
+  error: unknown;
+  isLoggingIn: boolean;
+  isRegistering: boolean;
+  isLoggingOut: boolean;
+} => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const token = authStorage.getToken();
@@ -24,7 +36,10 @@ export const useAuth = () => {
     }
   };
 
-  const user = queryClient.getQueryData(['user']) || getUserFromToken();
+  const user: User | undefined =
+    (queryClient.getQueryData(['user']) as User | undefined) ||
+    getUserFromToken() ||
+    undefined;
 
   if (user && !queryClient.getQueryData(['user'])) {
     queryClient.setQueryData(['user'], user);
