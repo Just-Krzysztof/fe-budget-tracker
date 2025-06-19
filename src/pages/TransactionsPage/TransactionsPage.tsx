@@ -10,7 +10,6 @@ import type { Transaction as TransactionFormData } from './types/transaction';
 import { TransactionForm } from '../../components/TransactionForm/TransactionForm';
 import { TagForm } from '../../components/TagForm/TagForm';
 import { useTags } from '../../hooks/useTags';
-import { authStorage } from '../../utils/auth';
 import { useAuth } from '../../hooks/useAuth';
 
 enum TransactionType {
@@ -176,8 +175,6 @@ const transactionResponse: Transaction[] = [
 //     </span>
 //   </div>
 // );
-const { user } = useAuth();
-const userId = user?.id;
 
 const TypeCell = ({ type }: { type: TransactionType }) => {
   const getTypeColor = (type: TransactionType) => {

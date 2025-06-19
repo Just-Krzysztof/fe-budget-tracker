@@ -5,6 +5,7 @@ import { SquarePlus } from 'lucide-react';
 import type { UseFormReturn } from 'react-hook-form';
 import type { Transaction as TransactionFormData } from '../../pages/TransactionsPage/types/transaction';
 import { useTags } from '../../hooks/useTags';
+import { useCurrencies } from '../../contexts/CurrencyContext';
 
 interface TransactionFormProps {
   form: UseFormReturn<TransactionFormData>;
@@ -27,7 +28,8 @@ export const TransactionForm = ({
     formState: { errors, isValid },
     setValue,
   } = form;
-  const { tags, isLoading, error } = useTags();
+  const { tags } = useTags();
+  const currencies = useCurrencies();
   const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newTagValue = e.target.value;
     setValue('tag', newTagValue);
@@ -67,9 +69,11 @@ export const TransactionForm = ({
           className="text-sm custom-input w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm transition duration-300 ease-in-out transform focus:-translate-y-1 focus:outline-blue-300 hover:shadow-lg hover:border-blue-300 bg-gray-50"
           {...register('currency')}
         >
-          <option value="PLN">PLN</option>
-          <option value="EUR">EUR</option>
-          <option value="USD">USD</option>
+          {currencies.map((currency) => (
+            <option key={currency} value={currency}>
+              {currency}
+            </option>
+          ))}
         </select>
         {errors.currency && (
           <p className="mt-1 text-sm text-red-500">
