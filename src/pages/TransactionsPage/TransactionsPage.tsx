@@ -9,6 +9,8 @@ import { useTransactionForm } from './hooks/useTransactionForm';
 import type { Transaction as TransactionFormData } from './types/transaction';
 import { TransactionForm } from '../../components/TransactionForm/TransactionForm';
 import { TagForm } from '../../components/TagForm/TagForm';
+import { useTags } from '../../hooks/useTags';
+import { authStorage } from '../../utils/auth';
 
 enum TransactionType {
   INCOME = 'INCOME',
@@ -174,6 +176,8 @@ const transactionResponse: Transaction[] = [
 //   </div>
 // );
 
+const userId = authStorage?.getUser()?.id;
+
 const TypeCell = ({ type }: { type: TransactionType }) => {
   const getTypeColor = (type: TransactionType) => {
     switch (type) {
@@ -258,9 +262,11 @@ export const TransactionsPage = () => {
     tagName: '',
     colorBg: '#3b82f6',
     colorText: '#ffffff',
+    userId: '',
   });
 
   const form = useTransactionForm();
+  const { tags, createTag, refetch } = useTags();
 
   const onSubmit = (data: TransactionFormData) => {
     console.log('Transaction data:', data);
@@ -268,9 +274,25 @@ export const TransactionsPage = () => {
     setShowModal(false);
   };
 
-  const handleTagSubmit = (data: typeof tagFormData) => {
-    console.log('New tag data:', data);
-    setShowTagModal(false);
+  const handleTagSubmit = async (data: typeof tagFormData) => {
+    try {
+      await createTag({
+        name: data.tagName,
+        userId,
+        colorBg: data.colorBg,
+        colorText: data.colorText,
+      });
+      await refetch();
+      setShowTagModal(false);
+      setTagFormData({
+        tagName: '',
+        colorBg: '#3b82f6',
+        colorText: '#ffffff',
+        userId: '',
+      });
+    } catch (err) {
+      console.error('Failed to create tag:', err);
+    }
   };
 
   return (

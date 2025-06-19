@@ -4,6 +4,7 @@ import { Textarea } from '../Form/Textarea';
 import { SquarePlus } from 'lucide-react';
 import type { UseFormReturn } from 'react-hook-form';
 import type { Transaction as TransactionFormData } from '../../pages/TransactionsPage/types/transaction';
+import { useTags } from '../../hooks/useTags';
 
 interface TransactionFormProps {
   form: UseFormReturn<TransactionFormData>;
@@ -26,7 +27,7 @@ export const TransactionForm = ({
     formState: { errors, isValid },
     setValue,
   } = form;
-
+  const { tags, isLoading, error } = useTags();
   const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newTagValue = e.target.value;
     setValue('tag', newTagValue);
@@ -125,8 +126,12 @@ export const TransactionForm = ({
             disabled={!!(goalValue && goalValue.trim() !== '')}
           >
             <option value="">None</option>
-            <option value="EUR">EUR</option>
-            <option value="USD">USD</option>
+            {tags.length > 0 &&
+              tags.map((tag) => (
+                <option key={tag.id} value={tag.name}>
+                  {tag.name}
+                </option>
+              ))}
           </select>
           <button
             type="button"
