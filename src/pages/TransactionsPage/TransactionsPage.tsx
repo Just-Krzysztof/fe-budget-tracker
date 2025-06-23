@@ -260,14 +260,12 @@ export const TransactionsPage = () => {
     tagName: '',
     colorBg: '#3b82f6',
     colorText: '#ffffff',
-    userId: '',
   });
 
   const form = useTransactionForm();
   const { tags, createTag, refetch } = useTags();
 
   const onSubmit = (data: TransactionFormData) => {
-    console.log('Transaction data:', data);
     form.reset();
     setShowModal(false);
   };
@@ -276,7 +274,6 @@ export const TransactionsPage = () => {
     try {
       await createTag({
         name: data.tagName,
-        userId,
         colorBg: data.colorBg,
         colorText: data.colorText,
       });
@@ -286,7 +283,6 @@ export const TransactionsPage = () => {
         tagName: '',
         colorBg: '#3b82f6',
         colorText: '#ffffff',
-        userId: '',
       });
     } catch (err) {
       console.error('Failed to create tag:', err);
