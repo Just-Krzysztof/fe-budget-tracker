@@ -10,7 +10,6 @@ import type { Transaction as TransactionFormData } from './types/transaction';
 import { TransactionForm } from '../../components/TransactionForm/TransactionForm';
 import { TagForm } from '../../components/TagForm/TagForm';
 import { useTags } from '../../hooks/useTags';
-import { useAuth } from '../../hooks/useAuth';
 
 enum TransactionType {
   INCOME = 'INCOME',
@@ -289,8 +288,6 @@ export const TransactionsPage = () => {
     }
   };
 
-  const { user } = useAuth();
-  const userId = user?.id;
   return (
     <div className="p-6">
       <h1 className="text-2xl flex items-center font-bold">

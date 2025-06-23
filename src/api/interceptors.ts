@@ -10,7 +10,6 @@ export const requestInterceptor = (request: Request) => {
 
 export const responseInterceptor = async (response: Response) => {
   if (response.status === 401) {
-    // Token wygasł lub jest nieprawidłowy
     authStorage.clear();
     window.location.href = '/auth/login';
     throw new Error('Session expired');

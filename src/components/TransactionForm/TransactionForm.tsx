@@ -5,6 +5,7 @@ import { SquarePlus } from 'lucide-react';
 import type { UseFormReturn } from 'react-hook-form';
 import type { Transaction as TransactionFormData } from '../../pages/TransactionsPage/types/transaction';
 import { useTags } from '../../hooks/useTags';
+import { useGoals } from '../../hooks/useGoals';
 import { useCurrencies } from '../../contexts/CurrencyContext';
 
 interface TransactionFormProps {
@@ -29,6 +30,7 @@ export const TransactionForm = ({
     setValue,
   } = form;
   const { tags } = useTags();
+  const {goals} = useGoals()
   const currencies = useCurrencies();
   const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newTagValue = e.target.value;
@@ -174,9 +176,12 @@ export const TransactionForm = ({
           onChange={handleGoalChange}
           disabled={!!(tagValue && tagValue.trim() !== '')}
         >
-          <option value="">None</option>
-          <option value="EUR">EUR</option>
-          <option value="USD">USD</option>
+          {goals.length > 0 &&
+              goals.map((goal) => (
+                <option key={goal.id} value={goal.name}>
+                  {goal.name}
+                </option>
+              ))}
         </select>
         {errors.goal && (
           <p className="mt-1 text-sm text-red-500">{errors.goal?.message}</p>

@@ -1,10 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { tagsApi, type Tag } from '../api/tags.api';
 import { useAuth } from './useAuth';
+import { useNavigate } from 'react-router-dom';
 
 export const useTags = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const {
     data: tags = [],
@@ -13,7 +15,7 @@ export const useTags = () => {
     refetch,
   } = useQuery({
     queryKey: ['tags', user?.id],
-    queryFn: tagsApi.getTags,
+    queryFn:() => tagsApi.getTags(() => navigate('/login')),
     enabled: !!user?.id,
     staleTime: 1000 * 60 * 10,
     gcTime: 1000 * 60 * 30,

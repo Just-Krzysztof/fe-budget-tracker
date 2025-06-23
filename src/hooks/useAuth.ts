@@ -20,6 +20,9 @@ export const useAuth = (): {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const token = authStorage.getToken();
+  console.log('token',token);
+  
+console.log('queryClient',queryClient);
 
   const getUserFromToken = () => {
     if (!token) return null;
