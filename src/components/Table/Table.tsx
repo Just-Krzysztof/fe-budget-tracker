@@ -1,4 +1,7 @@
 import React from 'react';
+import type { Goal as ApiGoal } from '../../api/goals.api';
+
+type Goal = ApiGoal & Record<string, unknown>;
 
 // Interfejs dla definicji kolumny
 export interface TableColumn<T> {

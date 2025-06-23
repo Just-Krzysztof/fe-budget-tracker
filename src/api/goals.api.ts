@@ -4,6 +4,7 @@ export interface Goal {
   id: string;
   name: string;
   targetAmount: number;
+  currentAmount: number;
   currency: string;
   deadline: string;
 }
@@ -25,7 +26,7 @@ export const goalsApi = {
     return response.json();
   },
 
-  loadGoals: async (userId: string): Promise<Goal> => {
+  loadGoals: async (userId: string): Promise<Goal[]> => {
     const token = localStorage.getItem('auth_token');
     const response = await fetch(`${API_URL}/goals/list/${userId}`, {
       headers: {

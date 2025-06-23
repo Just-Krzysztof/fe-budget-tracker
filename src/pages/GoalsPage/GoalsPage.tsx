@@ -7,25 +7,17 @@ import { Modal } from '../../components/Modal/Modal';
 import { useCurrencies } from '../../contexts/CurrencyContext';
 import { Input } from '../../components/Form/Input';
 import { Submit } from '../../components/Form/Submit';
-import { useTags } from '../../hooks/useTags';
 import { useGoalForm } from './hooks/useGoalsForm';
 import { useGoals } from '../../hooks/useGoals';
+import type { Goal as ApiGoal } from '../../api/goals.api';
 
-interface Goal extends Record<string, unknown> {
-  id: string | number;
-  currentAmount: number;
-  targetAmount: number;
-  deadline: string;
-  name: string;
-  currency: string;
-}
+type Goal = ApiGoal & Record<string, unknown>;
 
 type GoalFormData = {
   name: string;
   targetAmount: number;
   deadline: string;
   currency: string;
-  tag: string;
 };
 
 export const GoalsPage = () => {
@@ -33,13 +25,10 @@ export const GoalsPage = () => {
 
   const currencies = useCurrencies();
   const [showModal, setShowModal] = useState(false);
-  const { tags } = useTags();
-  const { goals, createGoal } = useGoals();
+  const { goals, createGoal,refetch } = useGoals();
 
   const onSubmit = async (data: GoalFormData) => {
     try {
-      console.log('data.tag', data.tag);
-
       await createGoal({
         name: data.name,
         targetAmount: data.targetAmount,
@@ -60,32 +49,6 @@ export const GoalsPage = () => {
     handleSubmit,
     formState: { errors, isValid },
   } = form;
-  const [goalsList] = useState<Goal[]>([
-    {
-      id: 1,
-      currentAmount: 234,
-      targetAmount: 2500,
-      deadline: '2030-07-22T10:00:00.000Z',
-      name: 'Mieszkanie',
-      currency: 'PLN',
-    },
-    {
-      id: 2,
-      currentAmount: 50,
-      targetAmount: 3500,
-      deadline: '2030-07-22T10:00:00.000Z',
-      name: 'Auto',
-      currency: 'PLN',
-    },
-    {
-      id: 3,
-      currentAmount: 1760,
-      targetAmount: 2500,
-      deadline: '2030-07-22T10:00:00.000Z',
-      name: 'Motor',
-      currency: 'PLN',
-    },
-  ]);
 
   const handleAddNewGoalClick = () => {
     setShowModal(!showModal);
@@ -131,13 +94,13 @@ export const GoalsPage = () => {
         <p className="mt-4">Zarządzaj swoimi celami finansowymi.</p>
 
         <div className="flex gap-2 flex-wrap mb-8">
-          {goalsList.map((el) => (
+          {(goals ?? []).slice(0, 3).map((el) => (
             <Box key={el.id} data={el}></Box>
           ))}
           <Box type="add" onClick={handleAddNewGoalClick}></Box>
         </div>
 
-        <Table columns={columns} data={goalsList} idKey="id" />
+        <Table columns={columns} data={(goals ?? []) as (Goal & Record<string, unknown>)[]} idKey="id" />
       </div>
       <Modal
         show={showModal}

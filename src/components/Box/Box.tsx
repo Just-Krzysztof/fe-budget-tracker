@@ -1,4 +1,5 @@
 interface GoalData {
+  id: string;
   currentAmount: number;
   targetAmount: number;
   deadline: string;
