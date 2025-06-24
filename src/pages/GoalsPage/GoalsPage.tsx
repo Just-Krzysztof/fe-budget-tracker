@@ -25,7 +25,7 @@ export const GoalsPage = () => {
 
   const currencies = useCurrencies();
   const [showModal, setShowModal] = useState(false);
-  const { goals, createGoal,refetch } = useGoals();
+  const { goals, createGoal, refetch } = useGoals();
 
   const onSubmit = async (data: GoalFormData) => {
     try {
@@ -40,7 +40,7 @@ export const GoalsPage = () => {
       form.reset();
       setShowModal(false);
     } catch (err) {
-      console.log('err', err);
+      console.error('err', err);
     }
   };
 
@@ -100,7 +100,11 @@ export const GoalsPage = () => {
           <Box type="add" onClick={handleAddNewGoalClick}></Box>
         </div>
 
-        <Table columns={columns} data={(goals ?? []) as (Goal & Record<string, unknown>)[]} idKey="id" />
+        <Table
+          columns={columns}
+          data={(goals ?? []) as (Goal & Record<string, unknown>)[]}
+          idKey="id"
+        />
       </div>
       <Modal
         show={showModal}

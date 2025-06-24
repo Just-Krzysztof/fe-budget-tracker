@@ -15,7 +15,7 @@ export const useTags = () => {
     refetch,
   } = useQuery({
     queryKey: ['tags', user?.id],
-    queryFn:() => tagsApi.getTags(() => navigate('/login')),
+    queryFn: () => tagsApi.getTags(() => navigate('/auth/login')),
     enabled: !!user?.id,
     staleTime: 1000 * 60 * 10,
     gcTime: 1000 * 60 * 30,

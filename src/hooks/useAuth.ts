@@ -20,9 +20,6 @@ export const useAuth = (): {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const token = authStorage.getToken();
-  console.log('token',token);
-  
-console.log('queryClient',queryClient);
 
   const getUserFromToken = () => {
     if (!token) return null;
@@ -48,31 +45,17 @@ console.log('queryClient',queryClient);
     queryClient.setQueryData(['user'], user);
   }
 
-  // console.log('Current state:', {
-  //   token: !!token,
-  //   user,
-  //   isTokenValid: authStorage.isAuthenticated(),
-  //   isUserInCache: !!user,
-  // });
-
   const login = useMutation({
     mutationFn: authApi.login,
     onSuccess: (data) => {
-      // console.log('Login success, data:', data);
       authStorage.setToken(data.accessToken, data.user);
-      // Upewnijmy się, że dane użytkownika są poprawnie zapisywane
       queryClient.setQueryData(['user'], data.user);
-      // console.log('After setting data:', {
-      //   token: authStorage.getToken(),
-      //   user: queryClient.getQueryData(['user']),
-      // });
     },
   });
 
   const register = useMutation({
     mutationFn: authApi.register,
     onSuccess: (data) => {
-      // console.log('Register success, data:', data);
       authStorage.setToken(data.accessToken, data.user);
       queryClient.setQueryData(['user'], data.user);
     },
@@ -90,7 +73,6 @@ console.log('queryClient',queryClient);
     },
   });
 
-  // Modify isAuthenticated to only check token
   const isAuthenticated = authStorage.isAuthenticated();
 
   return {

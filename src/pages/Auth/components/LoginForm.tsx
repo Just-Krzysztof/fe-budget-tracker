@@ -21,8 +21,6 @@ export const LoginForm = () => {
   });
 
   useEffect(() => {
-    console.log('isAuthenticated', isAuthenticated);
-
     if (isAuthenticated) {
       navigate('/', { replace: true });
     }

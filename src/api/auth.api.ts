@@ -22,7 +22,6 @@ export const authApi = {
     if (!response.ok) throw new Error('Login failed');
 
     const data: BackendAuthResponse = await response.json();
-    // console.log('Login API response:', data);
 
     const tokenData = parseJwt(data.accessToken);
 

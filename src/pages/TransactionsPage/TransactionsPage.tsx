@@ -7,16 +7,13 @@ import { SquarePlus, ArrowLeftToLine } from 'lucide-react';
 import { useState } from 'react';
 import { useTransactionForm } from './hooks/useTransactionForm';
 import type { Transaction as TransactionFormData } from './types/transaction';
+import { TransactionType } from './types/transaction';
 import { TransactionForm } from '../../components/TransactionForm/TransactionForm';
 import { TagForm } from '../../components/TagForm/TagForm';
 import { useTags } from '../../hooks/useTags';
-
-enum TransactionType {
-  INCOME = 'INCOME',
-  EXPANSES = 'EXPANSES',
-  SAVING = 'SAVING',
-}
-
+import { useTransactions } from '../../hooks/useTransaction';
+import type { Tag } from '../../api/tags.api';
+import type { Goal } from '../../api/goals.api';
 interface MonthlyData {
   name: TransactionType | string;
   value: number;
@@ -37,143 +34,64 @@ interface Transaction extends Record<string, unknown> {
   currency: string;
   description: string;
   date: string;
-  tag?: string;
-  goal?: string;
+  tag?: Tag;
+  goal?: Goal;
 }
 
 const response: ChartData[] = [
-  {
-    title: 'Last Month May',
-    data: [
-      {
-        name: TransactionType.INCOME,
-        value: 4000,
-        month: 5,
-        year: 2025,
-        currency: 'PLN',
-      },
-      {
-        name: TransactionType.EXPANSES,
-        value: 2500,
-        month: 5,
-        year: 2025,
-        currency: 'PLN',
-      },
-      {
-        name: TransactionType.SAVING,
-        value: 1700,
-        month: 5,
-        year: 2025,
-        currency: 'PLN',
-      },
-    ],
-  },
-  {
-    title: 'Current Month June',
-    data: [
-      {
-        name: TransactionType.INCOME,
-        value: 1700,
-        month: 5,
-        year: 2025,
-        currency: 'PLN',
-      },
-      {
-        name: TransactionType.EXPANSES,
-        value: 2500,
-        month: 5,
-        year: 2025,
-        currency: 'PLN',
-      },
-      {
-        name: TransactionType.SAVING,
-        value: 4000,
-        month: 5,
-        year: 2025,
-        currency: 'PLN',
-      },
-    ],
-  },
+  // {
+  //   title: 'Last Month May',
+  //   data: [
+  //     {
+  //       name: TransactionType.INCOME,
+  //       value: 4000,
+  //       month: 5,
+  //       year: 2025,
+  //       currency: 'PLN',
+  //     },
+  //     {
+  //       name: TransactionType.EXPANSES,
+  //       value: 2500,
+  //       month: 5,
+  //       year: 2025,
+  //       currency: 'PLN',
+  //     },
+  //     {
+  //       name: TransactionType.SAVING,
+  //       value: 1700,
+  //       month: 5,
+  //       year: 2025,
+  //       currency: 'PLN',
+  //     },
+  //   ],
+  // },
+  // {
+  //   title: 'Current Month June',
+  //   data: [
+  //     {
+  //       name: TransactionType.INCOME,
+  //       value: 1700,
+  //       month: 5,
+  //       year: 2025,
+  //       currency: 'PLN',
+  //     },
+  //     {
+  //       name: TransactionType.EXPANSES,
+  //       value: 2500,
+  //       month: 5,
+  //       year: 2025,
+  //       currency: 'PLN',
+  //     },
+  //     {
+  //       name: TransactionType.SAVING,
+  //       value: 4000,
+  //       month: 5,
+  //       year: 2025,
+  //       currency: 'PLN',
+  //     },
+  //   ],
+  // },
 ];
-
-const transactionResponse: Transaction[] = [
-  {
-    id: '1',
-    amount: 234,
-    type: TransactionType.SAVING,
-    currency: 'PLN',
-    description: 'Ble ble ble odkładam na auuto',
-    date: '',
-    tag: '',
-    goal: 'Na samochód',
-  },
-  {
-    id: '2',
-    amount: 5000,
-    type: TransactionType.INCOME,
-    currency: 'PLN',
-    description: 'Ble ble ble za prace',
-    date: '',
-    tag: 'Salary',
-    goal: '',
-  },
-  {
-    id: '3',
-    amount: 234,
-    type: TransactionType.EXPANSES,
-    currency: 'PLN',
-    description: 'Ble ble ble jedzenie',
-    date: '',
-    tag: 'Shop',
-    goal: '',
-  },
-  {
-    id: '4',
-    amount: 234,
-    type: TransactionType.EXPANSES,
-    currency: 'PLN',
-    description: 'Ble ble ble jedzenie',
-    date: '',
-    tag: 'Shop',
-    goal: '',
-  },
-  {
-    id: '5',
-    amount: 234,
-    type: TransactionType.EXPANSES,
-    currency: 'PLN',
-    description: 'Ble ble ble jedzenie',
-    date: '',
-    tag: 'Shop',
-    goal: '',
-  },
-  {
-    id: '6',
-    amount: 234,
-    type: TransactionType.EXPANSES,
-    currency: 'PLN',
-    description: 'Ble ble ble jedzenie',
-    date: '',
-    tag: 'Shop',
-    goal: '',
-  },
-];
-
-// const AmountCell = ({
-//   amount,
-//   currency,
-// }: {
-//   amount: number;
-//   currency: string;
-// }) => (
-//   <div className="flex items-center gap-2">
-//     <span
-//       className={`font-medium ${amount > 0 ? 'text-green-600' : 'text-red-600'}`}
-//     >
-//       {amount.toLocaleString()} {currency}
-//     </span>
-//   </div>
-// );
 
 const TypeCell = ({ type }: { type: TransactionType }) => {
   const getTypeColor = (type: TransactionType) => {
@@ -227,9 +145,7 @@ const columns: TableColumn<Transaction>[] = [
     key: 'description',
     header: 'Opis',
     className: 'w-64',
-    renderCell: (item) => (
-      <DescriptionCell description={item.description} tag={item.tag} />
-    ),
+    renderCell: (item) => <DescriptionCell description={item.description} />,
   },
   {
     key: 'date',
@@ -242,13 +158,13 @@ const columns: TableColumn<Transaction>[] = [
     key: 'tag',
     header: 'Tag',
     className: 'w-32',
-    renderCell: (item) => item.tag || '-',
+    renderCell: (item) => item?.tag?.name || '-',
   },
   {
     key: 'goal',
     header: 'Cel',
     className: 'w-32',
-    renderCell: (item) => item.goal || '-',
+    renderCell: (item) => item?.goal?.name || '-',
   },
 ];
 
@@ -262,11 +178,33 @@ export const TransactionsPage = () => {
   });
 
   const form = useTransactionForm();
-  const { tags, createTag, refetch } = useTags();
-
-  const onSubmit = (data: TransactionFormData) => {
-    form.reset();
-    setShowModal(false);
+  const { createTag, refetch } = useTags();
+  const [filters, setFilters] = useState({
+    month: 6,
+    year: 2025,
+    // optionally: startDate, endDate, etc.
+  });
+  const { transactions, isRefetchTransaction, createTransaction } =
+    useTransactions(filters);
+  console.log('transactions', transactions);
+  const onSubmit = async (data: TransactionFormData) => {
+    console.log('data', data);
+    try {
+      await createTransaction({
+        amount: data.amount,
+        type: data.type,
+        tagId: data.tag || null,
+        goalId: data.goal || null,
+        currency: data.currency,
+        description: data.description,
+        date: data.date,
+      });
+      await isRefetchTransaction();
+      form.reset();
+      setShowModal(false);
+    } catch (err) {
+      console.error('err', err);
+    }
   };
 
   const handleTagSubmit = async (data: typeof tagFormData) => {
@@ -308,9 +246,12 @@ export const TransactionsPage = () => {
           </div>
         ))}
       </div>
-
       <div className="mt-8">
-        <Table data={transactionResponse} columns={columns} idKey="id" />
+        <Table
+          data={transactions.transactions ?? []}
+          columns={columns}
+          idKey="id"
+        />
       </div>
       <Modal
         show={showModal}

@@ -30,8 +30,9 @@ export const TransactionForm = ({
     setValue,
   } = form;
   const { tags } = useTags();
-  const {goals} = useGoals()
+  const { goals } = useGoals();
   const currencies = useCurrencies();
+
   const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newTagValue = e.target.value;
     setValue('tag', newTagValue);
@@ -134,7 +135,7 @@ export const TransactionForm = ({
             <option value="">None</option>
             {tags.length > 0 &&
               tags.map((tag) => (
-                <option key={tag.id} value={tag.name}>
+                <option key={tag.id} value={tag.id}>
                   {tag.name}
                 </option>
               ))}
@@ -176,12 +177,13 @@ export const TransactionForm = ({
           onChange={handleGoalChange}
           disabled={!!(tagValue && tagValue.trim() !== '')}
         >
+          <option value="">None</option>
           {goals.length > 0 &&
-              goals.map((goal) => (
-                <option key={goal.id} value={goal.name}>
-                  {goal.name}
-                </option>
-              ))}
+            goals.map((goal) => (
+              <option key={goal.id} value={goal.id}>
+                {goal.name}
+              </option>
+            ))}
         </select>
         {errors.goal && (
           <p className="mt-1 text-sm text-red-500">{errors.goal?.message}</p>
