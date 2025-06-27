@@ -1,6 +1,4 @@
-import { Input } from '../Form/Input';
 import { Submit } from '../Form/Submit';
-import { Textarea } from '../Form/Textarea';
 import { SquarePlus } from 'lucide-react';
 import type { UseFormReturn } from 'react-hook-form';
 import type { Transaction as TransactionFormData } from '../../pages/TransactionsPage/types/transaction';
@@ -26,7 +24,7 @@ export const TransactionForm = ({
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: {  isValid },
     setValue,
   } = form;
   const { tags } = useTags();
@@ -53,23 +51,21 @@ export const TransactionForm = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-2">
-      <Input
-        inputName="amount"
-        inputType="text"
-        label="Amount"
-        placeholder="Enter amount..."
-        required
-        className="mx-auto"
-        error={errors.amount?.message}
-        {...register('amount', { valueAsNumber: true })}
-      />
+      <label className="floating-label">
+        <span className="">Amount</span>
+        <input
+          type="number"
+          className={`input w-full bg-gray-100 focus:outline-none`}
+          placeholder="Amount"
+          {...register('amount')}
+        />
+      </label>
 
-      <div className="w-full max-w-xs bg-white rounded-lg font-mono mx-auto">
-        <label className="block text-gray-600 text-sm font-bold mb-2">
-          Currency
-        </label>
+      <label className="floating-label">
+        <span>Currency</span>
         <select
-          className="text-sm custom-input w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm transition duration-300 ease-in-out transform focus:-translate-y-1 focus:outline-blue-300 hover:shadow-lg hover:border-blue-300 bg-gray-50"
+          defaultValue="Pick a color"
+          className="select w-full bg-gray-100 focus:outline-none"
           {...register('currency')}
         >
           {currencies.map((currency) => (
@@ -78,56 +74,23 @@ export const TransactionForm = ({
             </option>
           ))}
         </select>
-        {errors.currency && (
-          <p className="mt-1 text-sm text-red-500">
-            {errors.currency?.message}
-          </p>
-        )}
-      </div>
+      </label>
 
-      <Textarea
-        textareaName="description"
-        label="Description"
-        placeholder="Enter description..."
-        rows={3}
-        maxLength={500}
-        required
-        className="mx-auto"
-        error={errors.description?.message}
-        {...register('description')}
-      />
+      <label className="floating-label">
+        <span>Description</span>
+        <textarea
+          className="textarea resize-none w-full bg-gray-100 focus:outline-none"
+          placeholder="Description"
+          {...register('description')}
+        ></textarea>
+      </label>
 
-      <div className="w-full max-w-xs bg-white rounded-lg font-mono mx-auto">
-        <label className="block text-gray-600 text-sm font-bold mb-2">
-          Type
-        </label>
-        <select
-          className="text-sm custom-input w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm transition duration-300 ease-in-out transform focus:-translate-y-1 focus:outline-blue-300 hover:shadow-lg hover:border-blue-300 bg-gray-50"
-          {...register('type')}
-        >
-          <option value="INCOME">Income</option>
-          <option value="EXPENSE">Expense</option>
-          <option value="SAVING">Saving</option>
-        </select>
-        {errors.type && (
-          <p className="mt-1 text-sm text-red-500">{errors.type.message}</p>
-        )}
-      </div>
-
-      <div className="w-full max-w-xs bg-white rounded-lg font-mono mx-auto">
-        <label className="block text-gray-600 text-sm font-bold mb-2">
-          Tag
-        </label>
-        <div className="flex gap-2">
+      <div className="flex items-center gap-4">
+        <label className="floating-label w-full">
+          <span>Tag</span>
           <select
-            className="text-sm custom-input w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm transition duration-300 ease-in-out transform focus:-translate-y-1 focus:outline-blue-300 hover:shadow-lg hover:border-blue-300 bg-gray-50 disabled:shadow-none
-          disabled:hover:shadow-none
-          disabled:transform-none
-          disabled:border-gray-200
-          disabled:bg-gray-100
-          disabled:focus:outline-none
-          disabled:focus:ring-0
-          disabled:cursor-not-allowed"
+            defaultValue="null"
+            className="select bg-gray-100 w-full disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500 focus:outline-none"
             {...register('tag')}
             onChange={handleTagChange}
             disabled={!!(goalValue && goalValue.trim() !== '')}
@@ -140,39 +103,29 @@ export const TransactionForm = ({
                 </option>
               ))}
           </select>
-          <button
-            type="button"
-            className="hover:text-green-600 transition-colors cursor-pointer disabled:hover:shadow-none
+        </label>
+        <button
+          type="button"
+          className="hover:text-green-600 transition-colors cursor-pointer disabled:hover:shadow-none
+          focus:outline-none
           disabled:transform-none
           disabled:text-gray-100
           disabled:focus:outline-none
           disabled:focus:ring-0
           disabled:cursor-not-allowed"
-            onClick={onAddTag}
-            disabled={!!(goalValue && goalValue.trim() !== '')}
-          >
-            <SquarePlus className="text-green-500 w-8 h-8" />
-          </button>
-        </div>
-
-        {errors.tag && (
-          <p className="mt-1 text-sm text-red-500">{errors.tag?.message}</p>
-        )}
+          onClick={onAddTag}
+          disabled={!!(goalValue && goalValue.trim() !== '')}
+        >
+          <SquarePlus className="text-green-500 w-8 h-8" />
+        </button>
       </div>
 
-      <div className="w-full max-w-xs bg-white rounded-lg font-mono mx-auto">
-        <label className="block text-gray-600 text-sm font-bold mb-2">
-          Goal
-        </label>
+      <label className="floating-label">
+        <span>Goal</span>
         <select
-          className="text-sm custom-input w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm transition duration-300 ease-in-out transform focus:-translate-y-1 focus:outline-blue-300 hover:shadow-lg hover:border-blue-300 bg-gray-50  disabled:shadow-none
-        disabled:hover:shadow-none
-        disabled:transform-none
-        disabled:border-gray-200
-        disabled:bg-gray-100
-        disabled:focus:outline-none
-        disabled:focus:ring-0
-        disabled:cursor-not-allowed"
+          defaultValue="null"
+          className="select bg-gray-100 w-full 
+          focus:outline-none disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500"
           {...register('goal')}
           onChange={handleGoalChange}
           disabled={!!(tagValue && tagValue.trim() !== '')}
@@ -185,24 +138,16 @@ export const TransactionForm = ({
               </option>
             ))}
         </select>
-        {errors.goal && (
-          <p className="mt-1 text-sm text-red-500">{errors.goal?.message}</p>
-        )}
-      </div>
+      </label>
 
-      <div className="w-full max-w-xs bg-white rounded-lg font-mono mx-auto">
-        <label className="block text-gray-600 text-sm font-bold mb-2">
-          Date
-        </label>
+      <label className="floating-label">
+        <span className='pointer-events-none'>Date</span>
         <input
           type="date"
-          className="text-sm custom-input w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm transition duration-300 ease-in-out transform focus:-translate-y-1 focus:outline-blue-300 hover:shadow-lg hover:border-blue-300 bg-gray-50"
+          className="input w-full border-none bg-gray-100 focus:outline-none"
           {...register('date', { valueAsDate: true })}
         />
-        {errors.date && (
-          <p className="mt-1 text-sm text-red-500">{errors.date.message}</p>
-        )}
-      </div>
+      </label>
 
       <Submit
         className="mx-auto"

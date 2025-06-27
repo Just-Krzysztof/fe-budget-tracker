@@ -176,6 +176,7 @@ export const TransactionsPage = () => {
         <p className="text-black"></p>
       </div>
       <Modal
+        className='text-black'
         show={showModal}
         setShow={() => setShowModal(false)}
         alignment="center"

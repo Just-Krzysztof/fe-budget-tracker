@@ -49,7 +49,7 @@ export const RegisterForm = () => {
         <span>Email</span>
         <input
           type="email"
-          className={`input input-bordered w-full`}
+          className={`input input-bordered w-full focus:outline-none`}
           placeholder="Email"
           {...register('email', {
             required: 'Email is required',
@@ -67,7 +67,7 @@ export const RegisterForm = () => {
         <span>Name</span>
         <input
           type="name"
-          className={`input input-bordered w-full`}
+          className={`input input-bordered w-full focus:outline-none`}
           placeholder="Name"
           {...register('name', {
             required: 'Name is required',
@@ -85,7 +85,7 @@ export const RegisterForm = () => {
         <span>Password</span>
         <input
           type="password"
-          className={`input input-bordered w-full `}
+          className={`input input-bordered w-full focus:outline-none`}
           placeholder="Password"
           {...register('password', {
             required: 'Password is required',
@@ -103,7 +103,7 @@ export const RegisterForm = () => {
         <span>Currency</span>
         <input
           type="text"
-          className={`input input-bordered w-full`}
+          className={`input input-bordered w-full focus:outline-none`}
           placeholder="Currency"
           {...register('currency', {
             required: 'Currency is required',

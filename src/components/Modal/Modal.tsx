@@ -129,14 +129,14 @@ export const Modal = ({
         {/* Header */}
         <div className="flex-shrink-0 flex items-center justify-between p-4 border-b">
           <span className="font-bold">{isTitle}</span>
-          {showCancelBtnINSmallDevice && isMobile && (
+          {/* {showCancelBtnINSmallDevice && isMobile && (
             <button
               onClick={() => setShow(false)}
               className="text-sm text-gray-600 hover:text-gray-800"
             >
               Cancel
             </button>
-          )}
+          )} */}
           {showCloseButton && (
             <button
               onClick={() => setShow(false)}

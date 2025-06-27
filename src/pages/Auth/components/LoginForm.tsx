@@ -45,7 +45,7 @@ export const LoginForm = () => {
         <span>Email</span>
         <input
           type="email"
-          className={`input input-bordered w-full`}
+          className={`input input-bordered w-full focus:outline-none`}
           placeholder="Email"
           {...register('email', {
             required: 'Email is required',
@@ -63,7 +63,7 @@ export const LoginForm = () => {
         <span>Password</span>
         <input
           type="password"
-          className={`input input-bordered w-full`}
+          className={`input input-bordered w-full focus:outline-none`}
           placeholder="Password"
           autoComplete="current-password"
           {...register('password', {
