@@ -8,7 +8,7 @@ export const useGoalForm = () => {
     mode: 'onChange',
     defaultValues: {
       targetAmount: 0,
-      deadline: new Date(),
+      deadline: '',
       currency: 'PLN',
       tag: '',
       name: '',

@@ -40,7 +40,7 @@ export const useGoals = () => {
     goals,
     isLoading,
     error,
-    refetch,
+    refetchGoal:refetch,
     createGoal: createGoal.mutateAsync,
     isCreating: createGoal.isPending,
   };

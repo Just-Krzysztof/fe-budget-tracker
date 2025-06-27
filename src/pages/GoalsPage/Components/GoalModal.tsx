@@ -1,4 +1,3 @@
-import { Input } from '../../../components/Form/Input';
 import { Submit } from '../../../components/Form/Submit';
 import { useGoalForm } from '../hooks/useGoalsForm';
 import { useGoals } from '../../../hooks/useGoals';
@@ -11,7 +10,7 @@ interface GoalModalProps {
 export const GoalModal = ({ onClose }: GoalModalProps) => {
   const form = useGoalForm();
   const currencies = useCurrencies();
-  const { createGoal, refetch } = useGoals();
+  const { createGoal, refetchGoal } = useGoals();
 
   type GoalFormData = {
     name: string;
@@ -28,7 +27,7 @@ export const GoalModal = ({ onClose }: GoalModalProps) => {
         deadline: data.deadline,
         currency: data.currency,
       });
-      await refetch();
+      await refetchGoal();
 
       form.reset();
       onClose();

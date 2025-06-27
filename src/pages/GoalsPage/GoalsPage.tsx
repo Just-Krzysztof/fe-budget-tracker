@@ -55,18 +55,72 @@ export const GoalsPage = () => {
 
         <div className="flex gap-2 flex-wrap my-8">
           {goals.length > 0 &&
-            goals.slice(0,3).map((el) => (
-              <Box key={el.id} data={el}></Box>
-            ))}
+            goals.slice(0, 3).map((el) => <Box key={el.id} data={el}></Box>)}
 
           <Box type="add" onClick={() => setShowModal(true)}></Box>
         </div>
 
-        {/* <Table
-          columns={columns}
-          data={(goals ?? []) as (Goal & Record<string, unknown>)[]}
-          idKey="id"
-        /> */}
+        <div className="mt-8 overflow-x-auto rounded-box bg-gray-100">
+          <table className="table table-pin-rows table-auto table-pin-cols rounded-2xl w-full">
+            <thead className="">
+              <tr className="border-b-1 border-indigo-300 bg-gray-100 text-black">
+                <td />
+                <td className="text-center">Name</td>
+                <td className="text-center w-[75px] md:w-sm">Type</td>
+                <td className="text-center">Description</td>
+              </tr>
+            </thead>
+            <tbody>
+              {goals.length > 0 &&
+                goals.map((goal, index: number) => (
+                  <tr
+                    key={goal.id}
+                    className=" border-indigo-300 text-black hover:text-gray-500 not-last:border-b-1 hover:bg-gray-100"
+                  >
+                    <td>{index}</td>
+                    <td>{goal.name}</td>
+                    {/* <td className="text-center">{`${JSON.stringify(goal)} ${goal.currency}`}</td> */}
+                    <td className="flex w-full items-center gap-2">
+                      {goal.currentAmount}{' '}
+                      <progress
+                        className="progress progress-primary w-[75px] md:w-full"
+                        value={goal.currentAmount}
+                        max={goal.targetAmount}
+                      ></progress>{' '}
+                      {goal.targetAmount}
+                    </td>
+                    <td className="text-center">
+                      {new Date(goal.deadline).toLocaleDateString('pl-PL')}
+                    </td>
+                    {/* <td className="text-center">
+                  <TypeCell type={transaction.type} />
+                </td>
+                <td className="text-center">
+                  {new Date(transaction.date).toLocaleDateString('pl-PL')}
+                </td>
+                <td className="text-center">
+                  {transaction?.tag?.name ? (
+                    <div
+                      style={{
+                        '--tag-bg-color': transaction?.tag?.colorBg,
+                        '--tag-text-color': transaction?.tag?.colorText,
+                      }}
+                      className="badge border-(--tag-bg-color) bg-(--tag-bg-color) text-(--tag-text-color) text-nowrap"
+                    >
+                      {transaction?.tag?.name ?? '-'}
+                    </div>
+                  ) : (
+                    '-'
+                  )}
+                </td>
+                <td className="text-center">
+                  {transaction?.goal?.name ?? '-'}
+                </td> */}
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
       </div>
       {showModal && (
         <Modal

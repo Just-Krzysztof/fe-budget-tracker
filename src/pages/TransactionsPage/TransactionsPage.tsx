@@ -12,6 +12,7 @@ import { useTags } from '../../hooks/useTags';
 import { useTransactions } from '../../hooks/useTransaction';
 import { useShortSummary } from '../../hooks/useShortSummary';
 import { FormProvider } from 'react-hook-form';
+import { useGoals } from '../../hooks/useGoals';
 
 const TypeCell = ({ type }: { type: TransactionType }) => {
   const getTypeColor = (type: TransactionType) => {
@@ -41,6 +42,7 @@ export const TransactionsPage = () => {
 
   const form = useTransactionForm();
   const { createTag, refetch } = useTags();
+  const { refetchGoal} =useGoals()
   const [filters, setFilters] = useState({
     month: 6,
     year: 2025,
@@ -64,6 +66,7 @@ export const TransactionsPage = () => {
       });
       await isRefetchTransaction();
       await shortSummaryRefetch();
+      await refetchGoal()
       form.reset();
       setShowModal(false);
     } catch (err) {
