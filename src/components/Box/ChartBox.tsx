@@ -6,15 +6,15 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Cell,
 } from 'recharts';
 import type { TooltipProps } from 'recharts';
 
 type ChartData = {
-  name: 'INCOME' | 'EXPANSES' | 'SAVING' | string;
-  value: number;
+  id: string;
+  type: 'INCOME' | 'EXPENSE' | 'SAVING' | string;
   currency: string;
-  month?: number;
-  year?: number;
+  amount: number;
 };
 
 const CustomTooltip = ({
@@ -28,19 +28,21 @@ const CustomTooltip = ({
     const data = payload[0].payload;
     return (
       <div className="bg-white p-2 border border-gray-200 rounded shadow">
-        <p className="font-medium">{data.name}</p>
-        <p className="text-gray-600">{`${data.value.toLocaleString()} ${data.currency}`}</p>
+        <p className="font-medium">{data.type}</p>
+        <p className="text-gray-600">{`${data.amount.toLocaleString()} ${data.currency}`}</p>
       </div>
     );
   }
   return null;
 };
 
-const getBarColor = (name?: string) => {
-  switch (name) {
+const getBarColor = (type?: string) => {
+  console.log('type',type);
+  
+  switch (type) {
     case 'INCOME':
       return '#0088FE';
-    case 'EXPANSES':
+    case 'EXPENSE':
       return '#00C49F';
     case 'SAVING':
       return '#FFBB28';
@@ -58,10 +60,28 @@ export const ChartBox = ({
 }) => {
   if (!data) return null;
 
-  const coloredData = data.map((item) => ({
+  // Group entries by type and sum their amounts
+  const groupedData = Object.values(
+    data.reduce<Record<string, ChartData & { amount: number }>>((acc, item) => {
+      const amt = typeof item.amount === 'string' ? parseFloat(item.amount) : item.amount;
+      if (acc[item.type]) {
+        acc[item.type].amount += amt;
+      } else {
+        acc[item.type] = { ...item, amount: amt };
+      }
+      return acc;
+    }, {})
+  );
+  // Sort grouped entries by type
+  groupedData.sort((a, b) => a.type.localeCompare(b.type));
+  // Assign fill colors
+  const coloredData = groupedData.map((item) => ({
     ...item,
-    fill: getBarColor(item.name),
+    fill: getBarColor(item.type),
   }));
+
+  console.log('coloredData',coloredData);
+  
 
   return (
     <div className="p-4 rounded-xl shadow-lg">
@@ -73,10 +93,14 @@ export const ChartBox = ({
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
+            <XAxis dataKey="type" />
             <YAxis />
             <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="value" fill="#8884d8" />
+            <Bar dataKey="amount">
+              {coloredData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>

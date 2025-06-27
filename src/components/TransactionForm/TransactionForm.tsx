@@ -106,7 +106,7 @@ export const TransactionForm = ({
           {...register('type')}
         >
           <option value="INCOME">Income</option>
-          <option value="EXPANSE">Expense</option>
+          <option value="EXPENSE">Expense</option>
           <option value="SAVING">Saving</option>
         </select>
         {errors.type && (

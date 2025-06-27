@@ -48,7 +48,7 @@ export const transactionsApi = {
       { method: 'POST', body: JSON.stringify(filter) },
       onUnauthorized
     );
-    if (!response.ok) throw new Error('Failed to fetch tags');
+    if (!response.ok) throw new Error('Failed to fetch transactions');
     return response.json();
   },
   //   Omit<Tag, 'id'>
@@ -64,7 +64,7 @@ export const transactionsApi = {
       },
       onUnauthorized
     );
-    if (!response.ok) throw new Error('Failed to create tag');
+    if (!response.ok) throw new Error('Failed to create transaction');
     return response.json();
   },
 };

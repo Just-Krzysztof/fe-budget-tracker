@@ -1,133 +1,81 @@
 // src/layouts/MainLayout.tsx
 import { NavLink, Outlet } from 'react-router-dom';
-import { useState } from 'react';
+import { PanelLeftOpen } from 'lucide-react';
 
 export const MainLayout = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-opacity-50 z-40 md:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
+    <div className="flex min-h-screen bg-gray-200">
 
-      <aside
-        className={`
-          fixed md:fixed
-          top-0 left-0
-          h-full
-          w-80 md:w-64 lg:w-64
-          bg-gray-800 text-white p-6
-          transform transition-transform duration-200 ease-in-out
-          z-50
-          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        `}
-        aria-hidden={!isSidebarOpen && window.innerWidth < 768}
-      >
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">Budget Tracker v2</h2>
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            aria-label="Zamknij menu boczne"
-            className="md:hidden p-2 rounded-md text-gray-200 hover:bg-gray-700 focus:outline-none focus:ring"
-          >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <nav className="mt-8 space-y-4">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive
-                ? 'block text-gray-300'
-                : 'block text-gray-500 hover:text-gray-300'
-            }
-            onClick={() => setIsSidebarOpen(false)}
-          >
-            Dashboard
-          </NavLink>
-          <NavLink
-            to="/transactions"
-            className={({ isActive }) =>
-              isActive
-                ? 'block text-gray-300'
-                : 'block text-gray-500 hover:text-gray-300'
-            }
-            onClick={() => setIsSidebarOpen(false)}
-          >
-            Transactions
-          </NavLink>
-          <NavLink
-            to="/goals"
-            className={({ isActive }) =>
-              isActive
-                ? 'block text-gray-300'
-                : 'block text-gray-500 hover:text-gray-300'
-            }
-            onClick={() => setIsSidebarOpen(false)}
-          >
-            Goals
-          </NavLink>
-          <NavLink
-            to="/settings"
-            className={({ isActive }) =>
-              isActive
-                ? 'block text-gray-300'
-                : 'block text-gray-500 hover:text-gray-300'
-            }
-            onClick={() => setIsSidebarOpen(false)}
-          >
-            Settings
-          </NavLink>
-        </nav>
-      </aside>
-
-      <div className="flex-1 flex flex-col md:ml-64 lg:ml-64">
-        <header className="sticky top-0 w-full h-16 bg-white shadow p-4 flex items-center justify-between z-20">
-          <button
-            onClick={() => setIsSidebarOpen((prev) => !prev)}
-            aria-label={
-              isSidebarOpen ? 'Zamknij menu boczne' : 'Otwórz menu boczne'
-            }
-            aria-expanded={isSidebarOpen}
-            className=" md:invisible p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring"
-          >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              {isSidebarOpen ? (
-                // ikona "X"
-                <path d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                // ikona hamburgera
-                <path d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
+      <div className="w-lvw">
+        <header className="sticky top-0 w-full h-16 bg-white shadow p-4 flex items-center justify-between z-10">
+          <div className="drawer">
+            <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+            <div className="drawer-content">
+              <label
+                htmlFor="my-drawer"
+                className="text-gray-600 focus:outline-none focus:ring btn bg-transparent drawer-button rounded-full p-1 border-none transition ease-in-out duration-450 hover:scale-105 "
+              >
+                <PanelLeftOpen />
+              </label>
+            </div>
+            <div className="drawer-side">
+              <label
+                htmlFor="my-drawer"
+                aria-label="close sidebar"
+                className="drawer-overlay"
+              ></label>
+              <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+                <li>
+                  <NavLink
+                    to="/"
+                    onClick={() => {
+                      const drawer = document.getElementById('my-drawer') as HTMLInputElement;
+                      if (drawer) drawer.checked = false;
+                    }}
+                  >
+                    Dashboard
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/transactions"
+                    onClick={() => {
+                      const drawer = document.getElementById('my-drawer') as HTMLInputElement;
+                      if (drawer) drawer.checked = false;
+                    }}
+                  >
+                    Transactions
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/goals"
+                    onClick={() => {
+                      const drawer = document.getElementById('my-drawer') as HTMLInputElement;
+                      if (drawer) drawer.checked = false;
+                    }}
+                  >
+                    Goals
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/settings"
+                    onClick={() => {
+                      const drawer = document.getElementById('my-drawer') as HTMLInputElement;
+                      if (drawer) drawer.checked = false;
+                    }}
+                  >
+                    Settings
+                  </NavLink>
+                </li>
+              </ul>
+            </div>
+          </div>
           {/* avatar */}
           <div className="text-gray-800 text-lg font-semibold">UserName</div>
         </header>
-        <main className="flex-1 w-full bg-gray-100 overflow-y-auto">
+        <main className="z-5 max-w-7xl mx-auto text-black">
           <Outlet />
         </main>
       </div>

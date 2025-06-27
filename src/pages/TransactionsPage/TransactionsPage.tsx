@@ -1,7 +1,6 @@
 // src/pages/TransactionPage/TransactionPage.tsx
 import { ChartBox } from '../../components/Box/ChartBox';
 import { Modal } from '../../components/Modal/Modal';
-import Table from '../../components/Table/Table';
 import type { TableColumn } from '../../components/Table/Table';
 import { SquarePlus, ArrowLeftToLine } from 'lucide-react';
 import { useState } from 'react';
@@ -12,20 +11,10 @@ import { TransactionForm } from '../../components/TransactionForm/TransactionFor
 import { TagForm } from '../../components/TagForm/TagForm';
 import { useTags } from '../../hooks/useTags';
 import { useTransactions } from '../../hooks/useTransaction';
+import { useShortSummary } from '../../hooks/useShortSummary';
+import type { ShortSummaryChart } from '../../api/shortSummary.api';
 import type { Tag } from '../../api/tags.api';
 import type { Goal } from '../../api/goals.api';
-interface MonthlyData {
-  name: TransactionType | string;
-  value: number;
-  month: number;
-  year: number;
-  currency: string;
-}
-
-interface ChartData {
-  title: string;
-  data: MonthlyData[];
-}
 
 interface Transaction extends Record<string, unknown> {
   id: string;
@@ -38,80 +27,21 @@ interface Transaction extends Record<string, unknown> {
   goal?: Goal;
 }
 
-const response: ChartData[] = [
-  // {
-  //   title: 'Last Month May',
-  //   data: [
-  //     {
-  //       name: TransactionType.INCOME,
-  //       value: 4000,
-  //       month: 5,
-  //       year: 2025,
-  //       currency: 'PLN',
-  //     },
-  //     {
-  //       name: TransactionType.EXPANSES,
-  //       value: 2500,
-  //       month: 5,
-  //       year: 2025,
-  //       currency: 'PLN',
-  //     },
-  //     {
-  //       name: TransactionType.SAVING,
-  //       value: 1700,
-  //       month: 5,
-  //       year: 2025,
-  //       currency: 'PLN',
-  //     },
-  //   ],
-  // },
-  // {
-  //   title: 'Current Month June',
-  //   data: [
-  //     {
-  //       name: TransactionType.INCOME,
-  //       value: 1700,
-  //       month: 5,
-  //       year: 2025,
-  //       currency: 'PLN',
-  //     },
-  //     {
-  //       name: TransactionType.EXPANSES,
-  //       value: 2500,
-  //       month: 5,
-  //       year: 2025,
-  //       currency: 'PLN',
-  //     },
-  //     {
-  //       name: TransactionType.SAVING,
-  //       value: 4000,
-  //       month: 5,
-  //       year: 2025,
-  //       currency: 'PLN',
-  //     },
-  //   ],
-  // },
-];
-
 const TypeCell = ({ type }: { type: TransactionType }) => {
   const getTypeColor = (type: TransactionType) => {
     switch (type) {
       case TransactionType.INCOME:
-        return 'bg-green-100 text-green-800';
-      case TransactionType.EXPANSES:
-        return 'bg-red-100 text-red-800';
+        return 'bg-green-100 border-green-800 text-green-800';
+      case TransactionType.EXPENSE:
+        return 'bg-red-100 text-red-800 border-red-800';
       case TransactionType.SAVING:
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800 border-blue-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 text-gray-800';
     }
   };
 
-  return (
-    <span className={`px-2 py-1 rounded-full text-sm ${getTypeColor(type)}`}>
-      {type}
-    </span>
-  );
+  return <span className={`badge  ${getTypeColor(type)}`}>{type}</span>;
 };
 
 const DescriptionCell = ({
@@ -126,47 +56,6 @@ const DescriptionCell = ({
     {tag && <span className="text-xs text-gray-500">#{tag}</span>}
   </div>
 );
-
-// Definicja kolumn dla tabeli
-const columns: TableColumn<Transaction>[] = [
-  {
-    key: 'amount',
-    header: 'Kwota',
-    className: 'w-32',
-    renderCell: (item) => `${item.amount} ${item.currency}`,
-  },
-  {
-    key: 'type',
-    header: 'Typ',
-    className: 'w-24',
-    renderCell: (item) => <TypeCell type={item.type} />,
-  },
-  {
-    key: 'description',
-    header: 'Opis',
-    className: 'w-64',
-    renderCell: (item) => <DescriptionCell description={item.description} />,
-  },
-  {
-    key: 'date',
-    header: 'Data',
-    className: 'w-32',
-    renderCell: (item) =>
-      item.date ? new Date(item.date).toLocaleDateString('pl-PL') : '-',
-  },
-  {
-    key: 'tag',
-    header: 'Tag',
-    className: 'w-32',
-    renderCell: (item) => item?.tag?.name || '-',
-  },
-  {
-    key: 'goal',
-    header: 'Cel',
-    className: 'w-32',
-    renderCell: (item) => item?.goal?.name || '-',
-  },
-];
 
 export const TransactionsPage = () => {
   const [showModal, setShowModal] = useState(false);
@@ -186,7 +75,8 @@ export const TransactionsPage = () => {
   });
   const { transactions, isRefetchTransaction, createTransaction } =
     useTransactions(filters);
-  console.log('transactions', transactions);
+  const { shortSummary, shortSummaryRefetch } = useShortSummary();
+  console.log('shortSummary', shortSummary);
   const onSubmit = async (data: TransactionFormData) => {
     console.log('data', data);
     try {
@@ -200,6 +90,7 @@ export const TransactionsPage = () => {
         date: data.date,
       });
       await isRefetchTransaction();
+      await shortSummaryRefetch();
       form.reset();
       setShowModal(false);
     } catch (err) {
@@ -227,7 +118,7 @@ export const TransactionsPage = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="md:p-6 p-2">
       <h1 className="text-2xl flex items-center font-bold">
         Transactions
         <button
@@ -237,21 +128,66 @@ export const TransactionsPage = () => {
           <SquarePlus className="text-green-500 w-8 h-8" />
         </button>
       </h1>
-      <p className="mt-4">Welcome to your TransactionsPage</p>
+      {/* <pre>{ JSON.stringify(shortSummary) }</pre> */}
       <div className="flex justify-center flex-col lg:flex-row gap-5">
-        {response.map((chartData) => (
+        {shortSummary.map((chartData) => (
           <div key={chartData.title} className="flex flex-col items-center">
-            <h2 className="text-lg font-semibold mb-2">{chartData.title} </h2>
-            <ChartBox data={chartData.data} title={chartData.title} />
+
+            <ChartBox data={chartData.data ?? []} title={chartData.title} />
           </div>
         ))}
       </div>
-      <div className="mt-8">
-        <Table
-          data={transactions.transactions ?? []}
-          columns={columns}
-          idKey="id"
-        />
+      <div className="mt-8 overflow-x-auto rounded-box bg-transparent">
+        <table className="table table-pin-rows table-auto table-pin-cols rounded-2xl w-full">
+          <thead className="bg-transparent">
+            <tr className="border-b-1 border-indigo-300  bg-gray-200 text-black">
+              <td/>
+              <td className="text-center">Amount</td>
+              <td className="text-center">Type</td>
+              <td className="text-center">Description</td>
+              <td className="text-center">Last Login</td>
+              <td className="text-center">Tag</td>
+              <td className="text-center">Goal</td>
+            </tr>
+          </thead>
+          <tbody>
+            {transactions.transactions.map((transaction, index: number) => (
+              <tr
+                key={transaction.id}
+                className=" border-indigo-300 text-black hover:text-gray-500 not-last:border-b-1 hover:bg-gray-100"
+              >
+                <td>{index}</td>
+                <td className="text-center">{`${transaction.amount} ${transaction.currency}`}</td>
+                <td className="text-center">
+                  <TypeCell type={transaction.type} />
+                </td>
+                <td>{transaction.description}</td>
+                <td className="text-center">
+                  {new Date(transaction.date).toLocaleDateString('pl-PL')}
+                </td>
+                <td className="text-center">
+                  {transaction?.tag?.name ? (
+                    <div
+                      style={{
+                        '--tag-bg-color': transaction?.tag?.colorBg,
+                        '--tag-text-color': transaction?.tag?.colorText,
+                      }}
+                      className="badge border-(--tag-bg-color) bg-(--tag-bg-color) text-(--tag-text-color) text-nowrap"
+                    >
+                      {transaction?.tag?.name ?? '-'}
+                    </div>
+                  ) : (
+                    '-'
+                  )}
+                </td>
+                <td className="text-center">
+                  {transaction?.goal?.name ?? '-'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="text-black"></p>
       </div>
       <Modal
         show={showModal}

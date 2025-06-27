@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const transactionSchema = z
   .object({
     amount: z.number().min(1, 'Amount is required'),
-    type: z.enum(['INCOME', 'EXPANSE', 'SAVING']),
+    type: z.enum(['INCOME', 'EXPENSE', 'SAVING']),
     currency: z.string().min(1, 'Currency is required'),
     date: z.date(),
     description: z
@@ -29,7 +29,7 @@ export const transactionSchema = z
 
 export enum TransactionType {
   INCOME = 'INCOME',
-  EXPANSES = 'EXPANSES',
+  EXPENSE = 'EXPENSE',
   SAVING = 'SAVING',
 }
 export type Transaction = z.infer<typeof transactionSchema>;
