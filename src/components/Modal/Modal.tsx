@@ -104,6 +104,7 @@ export const Modal = ({
     <div
       className={`
         fixed inset-0 z-50
+        text-black
         ${isIntercepting ? 'bg-black/50' : 'bg-black/30'}
         transition-opacity duration-300
         ${show ? 'opacity-100' : 'opacity-0'}

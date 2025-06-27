@@ -9,23 +9,38 @@ export const transactionSchema = z
     description: z
       .string()
       .max(250, "Descriptio can't be longer than 250 characters"),
-    tag: z.string(),
-    goal: z.string(),
-    tagName: z.string(),
+    tag: z.string().optional(),
+    goal: z.string().optional(),
+    tagName: z.string().optional(),
   })
-  .refine(
-    (data) => {
-      const hasTag = data.tag && data.tag.trim() !== '';
-      const hasGoal = data.goal && data.goal.trim() !== '';
-
-      return !(hasTag && hasGoal);
-    },
-    {
-      message:
-        "You can't set both tag and goal. Choose one or leave both empty.",
-      path: ['tag'],
+  .superRefine((data, ctx) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tagSet = !!data.tag && data.tag.trim() !== '';
+    const goalSet = !!data.goal && data.goal.trim() !== '';
+    if (tagSet && goalSet) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "You can't set both tag and goal. Choose one or leave both empty.",
+        path: ['tag'],
+      });
     }
-  );
+    if (!tagSet && !goalSet) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'You must set either tag or goal.',
+        path: ['tag'],
+      });
+    }
+    if (data.date > today) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Date can't be in future",
+        path: ['date'],
+      });
+    }
+  });
 
 export enum TransactionType {
   INCOME = 'INCOME',

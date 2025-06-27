@@ -41,6 +41,8 @@ export const LoginForm = () => {
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-4 w-full max-w-md px-4 sm:px-6 mx-auto"
     >
+      {/* TODO Check it */}
+      {/* for better https://daisyui.com/components/hero/ */}
       <label className="floating-label">
         <span>Email</span>
         <input

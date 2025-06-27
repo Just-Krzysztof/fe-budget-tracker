@@ -37,7 +37,6 @@ const CustomTooltip = ({
 };
 
 const getBarColor = (type?: string) => {
-  console.log('type',type);
   
   switch (type) {
     case 'INCOME':
@@ -80,7 +79,6 @@ export const ChartBox = ({
     fill: getBarColor(item.type),
   }));
 
-  console.log('coloredData',coloredData);
   
 
   return (

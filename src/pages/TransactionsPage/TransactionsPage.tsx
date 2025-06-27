@@ -11,20 +11,7 @@ import { TagForm } from '../../components/TagForm/TagForm';
 import { useTags } from '../../hooks/useTags';
 import { useTransactions } from '../../hooks/useTransaction';
 import { useShortSummary } from '../../hooks/useShortSummary';
-// import type { ShortSummaryChart } from '../../api/shortSummary.api';
-// import type { Tag } from '../../api/tags.api';
-// import type { Goal } from '../../api/goals.api';
-
-// interface Transaction extends Record<string, unknown> {
-//   id: string;
-//   amount: number;
-//   type: TransactionType;
-//   currency: string;
-//   description: string;
-//   date: string;
-//   tag?: Tag;
-//   goal?: Goal;
-// }
+import { FormProvider } from 'react-hook-form';
 
 const TypeCell = ({ type }: { type: TransactionType }) => {
   const getTypeColor = (type: TransactionType) => {
@@ -64,11 +51,11 @@ export const TransactionsPage = () => {
   const { shortSummary, shortSummaryRefetch } = useShortSummary();
   console.log('shortSummary', shortSummary);
   const onSubmit = async (data: TransactionFormData) => {
-    console.log('data', data);
+    console.log('typeof data.date:', typeof data.date, data.date);
     try {
       await createTransaction({
         amount: data.amount,
-        type: data.type,
+        type: data.goal ? 'SAVING' : data.type,
         tagId: data.tag || null,
         goalId: data.goal || null,
         currency: data.currency,
@@ -117,8 +104,10 @@ export const TransactionsPage = () => {
       {/* <pre>{ JSON.stringify(shortSummary) }</pre> */}
       <div className="flex md:justify-center gap-5 overflow-x-auto flex-row">
         {shortSummary.map((chartData) => (
-          <div key={chartData.title} className="w-fit my-5 bg-gray-100 rounded-box">
-
+          <div
+            key={chartData.title}
+            className="w-fit my-5 bg-gray-100 rounded-box"
+          >
             <ChartBox data={chartData.data ?? []} title={chartData.title} />
           </div>
         ))}
@@ -127,7 +116,7 @@ export const TransactionsPage = () => {
         <table className="table table-pin-rows table-auto table-pin-cols rounded-2xl w-full">
           <thead className="">
             <tr className="border-b-1 border-indigo-300 bg-gray-100 text-black">
-              <td/>
+              <td />
               <td className="text-center">Amount</td>
               <td className="text-center">Type</td>
               <td className="text-center">Description</td>
@@ -176,7 +165,7 @@ export const TransactionsPage = () => {
         <p className="text-black"></p>
       </div>
       <Modal
-        className='text-black'
+        className="text-black"
         show={showModal}
         setShow={() => setShowModal(false)}
         alignment="center"
@@ -185,13 +174,15 @@ export const TransactionsPage = () => {
         isTitle={!showTagModal ? 'Add New Transaction' : 'Add New Tag'}
       >
         {!showTagModal ? (
-          <TransactionForm
-            form={form}
-            onSubmit={onSubmit}
-            onAddTag={() => setShowTagModal(true)}
-            tagValue={form.tagValue}
-            goalValue={form.goalValue}
-          />
+          <FormProvider {...form}>
+            <TransactionForm
+              form={form}
+              onSubmit={onSubmit}
+              onAddTag={() => setShowTagModal(true)}
+              tagValue={form.tagValue}
+              goalValue={form.goalValue}
+            />
+          </FormProvider>
         ) : (
           <>
             <button

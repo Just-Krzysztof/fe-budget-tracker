@@ -5,7 +5,6 @@ import { PanelLeftOpen } from 'lucide-react';
 export const MainLayout = () => {
   return (
     <div className="flex min-h-screen bg-gray-200">
-
       <div className="w-lvw">
         <header className="sticky top-0 w-full h-16 bg-white shadow p-4 flex items-center justify-between z-10">
           <div className="drawer">
@@ -29,7 +28,9 @@ export const MainLayout = () => {
                   <NavLink
                     to="/"
                     onClick={() => {
-                      const drawer = document.getElementById('my-drawer') as HTMLInputElement;
+                      const drawer = document.getElementById(
+                        'my-drawer'
+                      ) as HTMLInputElement;
                       if (drawer) drawer.checked = false;
                     }}
                   >
@@ -40,7 +41,9 @@ export const MainLayout = () => {
                   <NavLink
                     to="/transactions"
                     onClick={() => {
-                      const drawer = document.getElementById('my-drawer') as HTMLInputElement;
+                      const drawer = document.getElementById(
+                        'my-drawer'
+                      ) as HTMLInputElement;
                       if (drawer) drawer.checked = false;
                     }}
                   >
@@ -51,7 +54,9 @@ export const MainLayout = () => {
                   <NavLink
                     to="/goals"
                     onClick={() => {
-                      const drawer = document.getElementById('my-drawer') as HTMLInputElement;
+                      const drawer = document.getElementById(
+                        'my-drawer'
+                      ) as HTMLInputElement;
                       if (drawer) drawer.checked = false;
                     }}
                   >
@@ -62,7 +67,9 @@ export const MainLayout = () => {
                   <NavLink
                     to="/settings"
                     onClick={() => {
-                      const drawer = document.getElementById('my-drawer') as HTMLInputElement;
+                      const drawer = document.getElementById(
+                        'my-drawer'
+                      ) as HTMLInputElement;
                       if (drawer) drawer.checked = false;
                     }}
                   >
@@ -73,6 +80,10 @@ export const MainLayout = () => {
             </div>
           </div>
           {/* avatar */}
+          {/* TODO check it  */}
+          {/* Stat with icons or image */}
+          {/* for month summary */}
+          {/* https://daisyui.com/components/stat/ */}
           <div className="text-gray-800 text-lg font-semibold">UserName</div>
         </header>
         <main className="z-5 max-w-7xl mx-auto text-black">

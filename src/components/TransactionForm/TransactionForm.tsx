@@ -5,7 +5,6 @@ import type { Transaction as TransactionFormData } from '../../pages/Transaction
 import { useTags } from '../../hooks/useTags';
 import { useGoals } from '../../hooks/useGoals';
 import { useCurrencies } from '../../contexts/CurrencyContext';
-
 interface TransactionFormProps {
   form: UseFormReturn<TransactionFormData>;
   onSubmit: (data: TransactionFormData) => void;
@@ -24,7 +23,7 @@ export const TransactionForm = ({
   const {
     register,
     handleSubmit,
-    formState: {  isValid },
+    formState: { errors, isValid },
     setValue,
   } = form;
   const { tags } = useTags();
@@ -51,29 +50,51 @@ export const TransactionForm = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-2">
-      <label className="floating-label">
-        <span className="">Amount</span>
-        <input
-          type="number"
-          className={`input w-full bg-gray-100 focus:outline-none`}
-          placeholder="Amount"
-          {...register('amount')}
-        />
-      </label>
+      <div className="flex gap-5  ">
+        <label className="floating-label w-full">
+          <span className="">Amount</span>
+          <input
+            type="number"
+            className={`input w-full bg-gray-100 focus:outline-none`}
+            placeholder="Amount"
+            {...register('amount', { valueAsNumber: true })}
+          />
+          {errors.amount && (
+            <p className="text-red-500 text-xs mt-1">{errors.amount.message}</p>
+          )}
+        </label>
+
+        <label className="floating-label w-3xs">
+          <span>Currency</span>
+          <select
+            defaultValue=""
+            className="select w-full bg-gray-100 focus:outline-none"
+            {...register('currency')}
+          >
+            {currencies.map((currency) => (
+              <option key={currency} value={currency}>
+                {currency}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
 
       <label className="floating-label">
-        <span>Currency</span>
+        <span>Typ</span>
         <select
-          defaultValue="Pick a color"
-          className="select w-full bg-gray-100 focus:outline-none"
-          {...register('currency')}
+          defaultValue=""
+          className="select bg-gray-100 w-full 
+          focus:outline-none disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500"
+          {...register('type')}
         >
-          {currencies.map((currency) => (
-            <option key={currency} value={currency}>
-              {currency}
-            </option>
-          ))}
+          <option value="INCOME">INCOME</option>
+          <option value="EXPENSE">EXPENSE</option>
+          <option value="SAVING">SAVING</option>
         </select>
+        {errors.type && (
+          <p className="text-red-500 text-xs mt-1">{errors.type.message}</p>
+        )}
       </label>
 
       <label className="floating-label">
@@ -81,7 +102,7 @@ export const TransactionForm = ({
         <textarea
           className="textarea resize-none w-full bg-gray-100 focus:outline-none"
           placeholder="Description"
-          {...register('description')}
+          {...register('description', { required: true, min: 3 })}
         ></textarea>
       </label>
 
@@ -89,7 +110,7 @@ export const TransactionForm = ({
         <label className="floating-label w-full">
           <span>Tag</span>
           <select
-            defaultValue="null"
+            defaultValue=""
             className="select bg-gray-100 w-full disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500 focus:outline-none"
             {...register('tag')}
             onChange={handleTagChange}
@@ -103,6 +124,9 @@ export const TransactionForm = ({
                 </option>
               ))}
           </select>
+          {errors.tag && (
+            <p className="text-red-500 text-xs mt-1">{errors.tag.message}</p>
+          )}
         </label>
         <button
           type="button"
@@ -123,7 +147,7 @@ export const TransactionForm = ({
       <label className="floating-label">
         <span>Goal</span>
         <select
-          defaultValue="null"
+          defaultValue=""
           className="select bg-gray-100 w-full 
           focus:outline-none disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500"
           {...register('goal')}
@@ -138,22 +162,31 @@ export const TransactionForm = ({
               </option>
             ))}
         </select>
+        {errors.goal && (
+          <p className="text-red-500 text-xs mt-1">{errors.goal.message}</p>
+        )}
       </label>
 
       <label className="floating-label">
-        <span className='pointer-events-none'>Date</span>
+        <span className="pointer-events-none">Date</span>
         <input
           type="date"
           className="input w-full border-none bg-gray-100 focus:outline-none"
-          {...register('date', { valueAsDate: true })}
+          {...register('date', {
+            valueAsDate: true,
+            required: true
+          })}
         />
+        {errors.date && (
+          <p className="text-red-500 text-xs mt-1">{errors.date.message}</p>
+        )}
       </label>
 
       <Submit
         className="mx-auto"
         type="submit"
         name="Add Transaction"
-        disabled={!isValid}
+        disabled={false}
       />
     </form>
   );
