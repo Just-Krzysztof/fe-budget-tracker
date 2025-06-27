@@ -33,20 +33,21 @@ export const TagForm = ({
   };
 
   return (
-    <div className="space-y-4 p-2">
-      <Input
-        inputName="tagName"
-        inputType="text"
-        label="Tag Name"
-        placeholder="Enter tag name..."
-        required
-        onChange={(e) =>
-          onFormDataChange({
-            ...formData,
-            tagName: e.target.value,
-          })
-        }
-      />
+    <div className="space-y-4 py-6 px-2">
+      <label className="floating-label">
+        <span>Tag name</span>
+        <input
+          type="text"
+          placeholder="Tag name"
+          className="input bg-gray-100 focus:outline-none"
+          onChange={(e) =>
+            onFormDataChange({
+              ...formData,
+              tagName: e.target.value,
+            })
+          }
+        />
+      </label>
 
       <TagPreview
         tagName={formData.tagName}

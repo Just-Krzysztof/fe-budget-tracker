@@ -9,14 +9,6 @@ export const ColorGenerator = ({
   colorText,
   onColorChange,
 }: ColorGeneratorProps) => {
-  const presetColors = [
-    { name: 'blue', bg: '#3b82f6', text: '#ffffff' },
-    { name: 'green', bg: '#10b981', text: '#ffffff' },
-    { name: 'red', bg: '#ef4444', text: '#ffffff' },
-    { name: 'purple', bg: '#8b5cf6', text: '#ffffff' },
-    { name: 'orange', bg: '#f97316', text: '#ffffff' },
-    { name: 'gray', bg: '#6b7280', text: '#ffffff' },
-  ];
 
   const generateRandomColor = () => {
     const r = Math.floor(Math.random() * 256);
@@ -54,7 +46,7 @@ export const ColorGenerator = ({
             />
             <input
               type="text"
-              className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
+              className="flex-1 px-2 py-1 text-xs input bg-gray-100 focus:outline-none"
               placeholder="#3b82f6"
               value={colorBg || ''}
               onChange={(e) => onColorChange(e.target.value, colorText)}
@@ -76,27 +68,13 @@ export const ColorGenerator = ({
             />
             <input
               type="text"
-              className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
+              className="flex-1 px-2 py-1 text-xs input bg-gray-100 focus:outline-none"
               placeholder="#ffffff"
               value={colorText || ''}
               onChange={(e) => onColorChange(colorBg, e.target.value)}
             />
           </div>
         </div>
-      </div>
-
-      {/* Color Generator Buttons */}
-      <div className="flex gap-2 flex-wrap">
-        {presetColors.map((color) => (
-          <button
-            key={color.name}
-            type="button"
-            className={`px-3 py-1 text-xs bg-${color.name}-500 text-white rounded hover:bg-${color.name}-600 first-letter:uppercase`}
-            onClick={() => onColorChange(color.bg, color.text)}
-          >
-            {color.name}
-          </button>
-        ))}
       </div>
 
       {/* Random Color Generator */}
