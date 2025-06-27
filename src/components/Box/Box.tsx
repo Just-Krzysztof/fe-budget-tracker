@@ -1,3 +1,5 @@
+import { Calendar1, NotebookIcon } from 'lucide-react';
+
 interface GoalData {
   id: string;
   currentAmount: number;
@@ -60,15 +62,40 @@ export const Box = ({ data, type = 'goal', onClick }: BoxProps) => {
         </>
       ) : data ? (
         <>
-          <h4 className="pb-1">{data.name}</h4>
-          <p className="pb-2">
-            {data.currentAmount}
-            {data.currency} / {data.targetAmount}
-            {data.currency}
-          </p>
-          <p className="border-t-1 border-gray-200 text-gray-600">
-            to: {formatDeadline(data.deadline)}
-          </p>
+          <div className="flex justify-between">
+            {(() => {
+              const percent = Math.min(
+                100,
+                Math.round((data.currentAmount / data.targetAmount) * 100)
+              );
+
+              return (
+                <div
+                  className="tooltip"
+                  data-tip={`${data.currentAmount.toLocaleString()} ${data.currency} / ${data.targetAmount.toLocaleString()} ${data.currency}`}
+                >
+                  <div
+                    className="radial-progress"
+                    style={{ '--value': percent } as React.CSSProperties}
+                    aria-valuenow={percent}
+                    role="progressbar"
+                  >
+                    {percent}%
+                  </div>
+                </div>
+              );
+            })()}
+            <div>
+              <h4 className="flex gap-1 pb-1">
+                <NotebookIcon />
+                {data.name}
+              </h4>
+              <p className="flex gap-1 border-gray-200 text-gray-600">
+                <Calendar1 className="size-xs" />{' '}
+                {formatDeadline(data.deadline)}
+              </p>
+            </div>
+          </div>
         </>
       ) : (
         <p className="text-gray-500">No data provided.</p>

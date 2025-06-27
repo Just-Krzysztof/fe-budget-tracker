@@ -1,8 +1,16 @@
 @import 'tailwindcss';
 @plugin "daisyui" {
-    themes: light --default, dark --prefersdark, dracula;
+themes:
+        light --default,
+        dark --prefersdark,
+        dracula;
 }
 
 span {
-    background-color: transparent;
+background-color: transparent;
+}
+::selection {
+    color: gray;
+    background: #dedede;
+
 }
