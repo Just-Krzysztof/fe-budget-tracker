@@ -1,7 +1,6 @@
 // src/pages/TransactionPage/TransactionPage.tsx
 import { ChartBox } from '../../components/Box/ChartBox';
 import { Modal } from '../../components/Modal/Modal';
-import type { TableColumn } from '../../components/Table/Table';
 import { SquarePlus, ArrowLeftToLine } from 'lucide-react';
 import { useState } from 'react';
 import { useTransactionForm } from './hooks/useTransactionForm';
@@ -12,20 +11,20 @@ import { TagForm } from '../../components/TagForm/TagForm';
 import { useTags } from '../../hooks/useTags';
 import { useTransactions } from '../../hooks/useTransaction';
 import { useShortSummary } from '../../hooks/useShortSummary';
-import type { ShortSummaryChart } from '../../api/shortSummary.api';
-import type { Tag } from '../../api/tags.api';
-import type { Goal } from '../../api/goals.api';
+// import type { ShortSummaryChart } from '../../api/shortSummary.api';
+// import type { Tag } from '../../api/tags.api';
+// import type { Goal } from '../../api/goals.api';
 
-interface Transaction extends Record<string, unknown> {
-  id: string;
-  amount: number;
-  type: TransactionType;
-  currency: string;
-  description: string;
-  date: string;
-  tag?: Tag;
-  goal?: Goal;
-}
+// interface Transaction extends Record<string, unknown> {
+//   id: string;
+//   amount: number;
+//   type: TransactionType;
+//   currency: string;
+//   description: string;
+//   date: string;
+//   tag?: Tag;
+//   goal?: Goal;
+// }
 
 const TypeCell = ({ type }: { type: TransactionType }) => {
   const getTypeColor = (type: TransactionType) => {
@@ -43,19 +42,6 @@ const TypeCell = ({ type }: { type: TransactionType }) => {
 
   return <span className={`badge  ${getTypeColor(type)}`}>{type}</span>;
 };
-
-const DescriptionCell = ({
-  description,
-  tag,
-}: {
-  description: string;
-  tag?: string;
-}) => (
-  <div className="flex flex-col">
-    <span className="text-sm">{description}</span>
-    {tag && <span className="text-xs text-gray-500">#{tag}</span>}
-  </div>
-);
 
 export const TransactionsPage = () => {
   const [showModal, setShowModal] = useState(false);
@@ -129,18 +115,18 @@ export const TransactionsPage = () => {
         </button>
       </h1>
       {/* <pre>{ JSON.stringify(shortSummary) }</pre> */}
-      <div className="flex justify-center flex-col lg:flex-row gap-5">
+      <div className="flex md:justify-center gap-5 overflow-x-auto flex-row">
         {shortSummary.map((chartData) => (
-          <div key={chartData.title} className="flex flex-col items-center">
+          <div key={chartData.title} className="w-fit my-5 bg-gray-100 rounded-box">
 
             <ChartBox data={chartData.data ?? []} title={chartData.title} />
           </div>
         ))}
       </div>
-      <div className="mt-8 overflow-x-auto rounded-box bg-transparent">
+      <div className="mt-8 overflow-x-auto rounded-box bg-gray-100">
         <table className="table table-pin-rows table-auto table-pin-cols rounded-2xl w-full">
-          <thead className="bg-transparent">
-            <tr className="border-b-1 border-indigo-300  bg-gray-200 text-black">
+          <thead className="">
+            <tr className="border-b-1 border-indigo-300 bg-gray-100 text-black">
               <td/>
               <td className="text-center">Amount</td>
               <td className="text-center">Type</td>

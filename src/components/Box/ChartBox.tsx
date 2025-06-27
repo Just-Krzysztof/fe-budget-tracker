@@ -84,7 +84,7 @@ export const ChartBox = ({
   
 
   return (
-    <div className="p-4 rounded-xl shadow-lg">
+    <div className="p-4 w-sm rounded-xl shadow-lg">
       {title && <h3 className="text-lg font-semibold mb-2">{title}</h3>}
       <div className="w-[375px] h-[175px]">
         <ResponsiveContainer width="100%" height="100%">
