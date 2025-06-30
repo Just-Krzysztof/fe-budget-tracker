@@ -42,56 +42,72 @@ export const GoalModal = ({ onClose }: GoalModalProps) => {
     formState: { errors, isValid },
   } = form;
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-2">
-      <label className='floating-label'>
-        <span>Name</span>
-        <input type="text" placeholder='Name' className='input w-full bg-gray-100 focus:outline-none' {...register('name')}/>
-        
-      </label>
-      <p>{errors.name?.message}</p>
-      <label className="floating-label">
-        <span>Target Amount</span>
-        <input
-          type="number"
-          placeholder="Target Amount"
-          className="input w-full bg-gray-100 focus:outline-none"
-          {...register('targetAmount', { valueAsNumber: true })}
-        />
-      </label>
-      <p>{errors.targetAmount?.message}</p>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-6">
 
-      <div className="w-full max-w-xs bg-white rounded-lg font-mono mx-auto">
-        <label className="block text-gray-600 text-sm font-bold mb-2">
-          Deadline
+      <label className="floating-label w-full">
+        <span className="text-sm text-gray-600">Name</span>
+        <input
+          type="text"
+          placeholder="Name"
+          className="input w-full bg-gray-100 focus:outline-none rounded-lg"
+          {...register('name')}
+        />
+        {errors.name && (
+          <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
+        )}
+      </label>
+      <div className="flex gap-4">
+        <label className="floating-label w-full">
+          <span className="text-sm text-gray-600">Target Amount</span>
+          <input
+            type="number"
+            placeholder="Target Amount"
+            className="select w-full bg-gray-100 focus:outline-none rounded-lg"
+            {...register('targetAmount', {
+              required: 'Amoun is required',
+              valueAsNumber: true,
+              min: { value: 0.01, message: 'Amount must be greater than 0' },
+            })}
+          />
         </label>
+        {errors.targetAmount && (
+          <p className="text-red-500 text-xs mt-1">
+            {errors.targetAmount.message}
+          </p>
+        )}
+        <label className="floating-label w-32">
+          <span className="text-sm text-gray-600">Currency *</span>
+          <select
+            className="select w-full bg-gray-100 focus:outline-none rounded-lg"
+            {...register('currency', { required: 'Currency is required' })}
+          >
+            <option value="">Select Currrency</option>
+            {currencies.map((currency) => (
+              <option key={currency} value={currency}>
+                {currency}
+              </option>
+            ))}
+          </select>
+          {errors.currency && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.currency.message}
+            </p>
+          )}
+        </label>
+      </div>
+
+      <label className="floating-label">
+        <span className="text-sm text-gray-600">Data *</span>
         <input
           type="date"
-          className="text-sm custom-input w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm transition duration-300 ease-in-out transform focus:-translate-y-1 focus:outline-blue-300 hover:shadow-lg hover:border-blue-300 bg-gray-50"
+          className="input w-full border-none bg-gray-100 focus:outline-none rounded-lg"
+          min={new Date().toISOString().split('T')[0]}
           {...register('deadline')}
         />
         {errors.deadline && (
-          <p className="mt-1 text-sm text-red-500">{errors.deadline.message}</p>
+          <p className="text-red-500 text-xs mt-1">{errors.deadline.message}</p>
         )}
-      </div>
-
-      <div className="w-full max-w-xs bg-white rounded-lg font-mono mx-auto">
-        <label className="block text-gray-600 text-sm font-bold mb-2">
-          Currency
-        </label>
-        <select
-          className="text-sm custom-input w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm transition duration-300 ease-in-out transform focus:-translate-y-1 focus:outline-blue-300 hover:shadow-lg hover:border-blue-300 bg-gray-50"
-          {...register('currency')}
-        >
-          {currencies.map((currency) => (
-            <option key={currency} value={currency}>
-              {currency}
-            </option>
-          ))}
-        </select>
-        {errors.currency && (
-          <p className="mt-1 text-sm text-red-500">{errors.currency.message}</p>
-        )}
-      </div>
+      </label>
 
       <Submit
         className="mx-auto"

@@ -24,44 +24,26 @@ export const TransactionForm = ({
     register,
     handleSubmit,
     formState: { errors, isValid },
-    setValue,
+    // setValue,
   } = form;
   const { tags } = useTags();
   const { goals } = useGoals();
   const currencies = useCurrencies();
 
-  const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newTagValue = e.target.value;
-    setValue('tag', newTagValue);
-
-    if (newTagValue && newTagValue.trim() !== '') {
-      setValue('goal', '');
-    }
-  };
-
-  const handleGoalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newGoalValue = e.target.value;
-    setValue('goal', newGoalValue);
-
-    if (newGoalValue && newGoalValue.trim() !== '') {
-      setValue('tag', '');
-    }
-  };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-6">
       <div className="flex gap-4">
         <label className="floating-label w-full">
-          <span className="text-sm text-gray-600">Kwota *</span>
+          <span className="text-sm text-gray-600">Amount *</span>
           <input
             type="number"
             step="0.01"
             className="input w-full bg-gray-100 focus:outline-none rounded-lg "
             placeholder="0.00"
             {...register('amount', { 
-              required: 'Kwota jest wymagana',
+              required: 'Amoun is required',
               valueAsNumber: true,
-              min: { value: 0.01, message: 'Kwota musi być większa od 0' }
+              min: { value: 0.01, message: 'Amount must be greater than 0' }
             })}
           />
           {errors.amount && (
@@ -70,12 +52,12 @@ export const TransactionForm = ({
         </label>
 
         <label className="floating-label w-32">
-          <span className="text-sm text-gray-600">Waluta *</span>
+          <span className="text-sm text-gray-600">Currency *</span>
           <select
             className="select w-full bg-gray-100 focus:outline-none rounded-lg"
             {...register('currency', { required: 'Waluta jest wymagana' })}
           >
-            <option value="">Wybierz walutę</option>
+            <option value="">Select currency</option>
             {currencies.map((currency) => (
               <option key={currency} value={currency}>
                 {currency}
@@ -94,10 +76,13 @@ export const TransactionForm = ({
           className="select bg-gray-100 w-full focus:outline-none rounded-lg"
           {...register('type', { required: 'Rodzaj transakcji jest wymagany' })}
         >
-          <option value="">Wybierz typ</option>
-          <option value="INCOME">Przychód</option>
+          <option value="">Select Type</option>
+          <option value="INCOME">Income</option>
+          <option value="EXPENSE">Expense</option>
+          <option value="SAVING">Save</option>
+          {/* <option value="INCOME">Przychód</option>
           <option value="EXPENSE">Wydatek</option>
-          <option value="SAVING">Oszczędność</option>
+          <option value="SAVING">Oszczędność</option> */}
         </select>
         {errors.type && (
           <p className="text-red-500 text-xs mt-1">{errors.type.message}</p>
@@ -105,12 +90,12 @@ export const TransactionForm = ({
       </label>
 
       <label className="floating-label">
-        <span className="text-sm text-gray-600">Opis</span>
+        <span className="text-sm text-gray-600">Description</span>
         <textarea
           className="textarea resize-none w-full bg-gray-100 focus:outline-none rounded-lg h-24"
           placeholder="Dodaj opis transakcji..."
           {...register('description', { 
-            minLength: { value: 3, message: 'Opis musi mieć co najmniej 3 znaki' }
+            minLength: { value: 3, message: 'The description must be at least 3 characters long' }
           })}
         />
         {errors.description && (
