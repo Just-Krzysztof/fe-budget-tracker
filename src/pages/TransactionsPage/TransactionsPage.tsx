@@ -13,6 +13,7 @@ import { useTransactions } from '../../hooks/useTransaction';
 import { useShortSummary } from '../../hooks/useShortSummary';
 import { FormProvider } from 'react-hook-form';
 import { useGoals } from '../../hooks/useGoals';
+import { Pagination } from '../../components/Table/Pagination';
 
 const TypeCell = ({ type }: { type: TransactionType }) => {
   const getTypeColor = (type: TransactionType) => {
@@ -34,6 +35,9 @@ const TypeCell = ({ type }: { type: TransactionType }) => {
 export const TransactionsPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [showTagModal, setShowTagModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 25;
+  
   const [tagFormData, setTagFormData] = useState({
     tagName: '',
     colorBg: '#3b82f6',
@@ -42,15 +46,28 @@ export const TransactionsPage = () => {
 
   const form = useTransactionForm();
   const { createTag, refetch } = useTags();
-  const { refetchGoal} =useGoals()
+  const { refetchGoal } = useGoals();
+  
   const [filters, setFilters] = useState({
     month: 6,
     year: 2025,
-    // optionally: startDate, endDate, etc.
+    skip: (currentPage - 1) * pageSize,
+    take: pageSize,
   });
+
   const { transactions, isRefetchTransaction, createTransaction } =
     useTransactions(filters);
   const { shortSummary, shortSummaryRefetch } = useShortSummary();
+
+  // Update filters when currentPage changes
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    setFilters(prev => ({
+      ...prev,
+      skip: (page - 1) * pageSize,
+    }));
+  };
+
   const onSubmit = async (data: TransactionFormData) => {
     console.log('typeof data.date:', typeof data.date, data.date);
     try {
@@ -65,7 +82,7 @@ export const TransactionsPage = () => {
       });
       await isRefetchTransaction();
       await shortSummaryRefetch();
-      await refetchGoal()
+      await refetchGoal();
       form.reset();
       setShowModal(false);
     } catch (err) {
@@ -103,7 +120,7 @@ export const TransactionsPage = () => {
           <SquarePlus className="text-green-500 w-8 h-8" />
         </button>
       </h1>
-      {/* <pre>{ JSON.stringify(shortSummary) }</pre> */}
+      
       <div className="flex md:justify-center gap-5 overflow-x-auto flex-row">
         {shortSummary.map((chartData) => (
           <div
@@ -114,6 +131,7 @@ export const TransactionsPage = () => {
           </div>
         ))}
       </div>
+      
       <div className="mt-8 overflow-x-auto rounded-box bg-gray-100">
         <table className="table table-pin-rows table-auto table-pin-cols rounded-2xl w-full">
           <thead className="">
@@ -122,7 +140,7 @@ export const TransactionsPage = () => {
               <td className="text-center">Amount</td>
               <td className="text-center">Type</td>
               <td className="text-center">Description</td>
-              <td className="text-center">Last Login</td>
+              <td className="text-center">Date</td>
               <td className="text-center">Tag</td>
               <td className="text-center">Goal</td>
             </tr>
@@ -133,7 +151,7 @@ export const TransactionsPage = () => {
                 key={transaction.id}
                 className=" border-indigo-300 text-black hover:text-gray-500 not-last:border-b-1 hover:bg-gray-100"
               >
-                <td>{index}</td>
+                <td>{(currentPage - 1) * pageSize + index + 1}</td>
                 <td className="text-center">{`${transaction.amount} ${transaction.currency}`}</td>
                 <td className="text-center">
                   <TypeCell type={transaction.type} />
@@ -164,8 +182,20 @@ export const TransactionsPage = () => {
             ))}
           </tbody>
         </table>
-        <p className="text-black"></p>
+        
+        {/* Paginacja */}
+        <div className="p-4">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={transactions.totalPages}
+            onPageChange={handlePageChange}
+            itemsPerPage={pageSize}
+            totalItems={transactions.totalElements}
+            showInfo={true}
+          />
+        </div>
       </div>
+      
       <Modal
         className="text-black"
         show={showModal}
