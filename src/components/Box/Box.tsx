@@ -62,7 +62,44 @@ export const Box = ({ data, type = 'goal', onClick }: BoxProps) => {
         </>
       ) : data ? (
         <>
-          <div className="flex justify-between">
+          <div className="flex flex-col">
+            <h4 className="flex justify-center">
+              {data.name}
+            </h4>
+            <div className="flex flex-row">
+              <div className="w-[50%] border-r-2">
+                {(() => {
+                  const percent = Math.min(
+                    100,
+                    Math.round((data.currentAmount / data.targetAmount) * 100)
+                  );
+
+                  return (
+                    <div
+                      className="tooltip"
+                      data-tip={`${data.currentAmount.toLocaleString()} ${data.currency} / ${data.targetAmount.toLocaleString()} ${data.currency}`}
+                    >
+                      <div
+                        className="radial-progress"
+                        style={{ '--value': percent } as React.CSSProperties}
+                        aria-valuenow={percent}
+                        role="progressbar"
+                      >
+                        {percent}%
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+              {/* <span className="border-r-2 mx-auto"></span> */}
+
+              <span className="flex gap-1 w-[50%] justify-end border-gray-200 text-gray-600">
+                <Calendar1 className="size-xs" />{' '}
+                {formatDeadline(data.deadline)}
+              </span>
+            </div>
+          </div>
+          {/* <div className="flex justify-between">
             {(() => {
               const percent = Math.min(
                 100,
@@ -95,7 +132,7 @@ export const Box = ({ data, type = 'goal', onClick }: BoxProps) => {
                 {formatDeadline(data.deadline)}
               </p>
             </div>
-          </div>
+          </div> */}
         </>
       ) : (
         <p className="text-gray-500">No data provided.</p>

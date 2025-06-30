@@ -51,7 +51,6 @@ export const TransactionsPage = () => {
   const { transactions, isRefetchTransaction, createTransaction } =
     useTransactions(filters);
   const { shortSummary, shortSummaryRefetch } = useShortSummary();
-  console.log('shortSummary', shortSummary);
   const onSubmit = async (data: TransactionFormData) => {
     console.log('typeof data.date:', typeof data.date, data.date);
     try {

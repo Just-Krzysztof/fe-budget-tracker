@@ -49,48 +49,55 @@ export const TransactionForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-2">
-      <div className="flex gap-5  ">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-6">
+      <div className="flex gap-4">
         <label className="floating-label w-full">
-          <span className="">Amount</span>
+          <span className="text-sm text-gray-600">Kwota *</span>
           <input
             type="number"
-            className={`input w-full bg-gray-100 focus:outline-none`}
-            placeholder="Amount"
-            {...register('amount', { valueAsNumber: true })}
+            step="0.01"
+            className="input w-full bg-gray-100 focus:outline-none rounded-lg "
+            placeholder="0.00"
+            {...register('amount', { 
+              required: 'Kwota jest wymagana',
+              valueAsNumber: true,
+              min: { value: 0.01, message: 'Kwota musi być większa od 0' }
+            })}
           />
           {errors.amount && (
             <p className="text-red-500 text-xs mt-1">{errors.amount.message}</p>
           )}
         </label>
 
-        <label className="floating-label w-3xs">
-          <span>Currency</span>
+        <label className="floating-label w-32">
+          <span className="text-sm text-gray-600">Waluta *</span>
           <select
-            defaultValue=""
-            className="select w-full bg-gray-100 focus:outline-none"
-            {...register('currency')}
+            className="select w-full bg-gray-100 focus:outline-none rounded-lg"
+            {...register('currency', { required: 'Waluta jest wymagana' })}
           >
+            <option value="">Wybierz walutę</option>
             {currencies.map((currency) => (
               <option key={currency} value={currency}>
                 {currency}
               </option>
             ))}
           </select>
+          {errors.currency && (
+            <p className="text-red-500 text-xs mt-1">{errors.currency.message}</p>
+          )}
         </label>
       </div>
 
       <label className="floating-label">
-        <span>Typ</span>
+        <span className="text-sm text-gray-600">Rodzaj transakcji *</span>
         <select
-          defaultValue=""
-          className="select bg-gray-100 w-full 
-          focus:outline-none disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500"
-          {...register('type')}
+          className="select bg-gray-100 w-full focus:outline-none rounded-lg"
+          {...register('type', { required: 'Rodzaj transakcji jest wymagany' })}
         >
-          <option value="INCOME">INCOME</option>
-          <option value="EXPENSE">EXPENSE</option>
-          <option value="SAVING">SAVING</option>
+          <option value="">Wybierz typ</option>
+          <option value="INCOME">Przychód</option>
+          <option value="EXPENSE">Wydatek</option>
+          <option value="SAVING">Oszczędność</option>
         </select>
         {errors.type && (
           <p className="text-red-500 text-xs mt-1">{errors.type.message}</p>
@@ -98,25 +105,29 @@ export const TransactionForm = ({
       </label>
 
       <label className="floating-label">
-        <span>Description</span>
+        <span className="text-sm text-gray-600">Opis</span>
         <textarea
-          className="textarea resize-none w-full bg-gray-100 focus:outline-none"
-          placeholder="Description"
-          {...register('description', { required: true, min: 3 })}
-        ></textarea>
+          className="textarea resize-none w-full bg-gray-100 focus:outline-none rounded-lg h-24"
+          placeholder="Dodaj opis transakcji..."
+          {...register('description', { 
+            minLength: { value: 3, message: 'Opis musi mieć co najmniej 3 znaki' }
+          })}
+        />
+        {errors.description && (
+          <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>
+        )}
       </label>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-end gap-4">
         <label className="floating-label w-full">
-          <span>Tag</span>
+          <span className="text-sm text-gray-600">Tag</span>
           <select
-            defaultValue=""
-            className="select bg-gray-100 w-full disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500 focus:outline-none"
+            className="select bg-gray-100 w-full disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500 focus:outline-none rounded-lg"
             {...register('tag')}
-            onChange={handleTagChange}
             disabled={!!(goalValue && goalValue.trim() !== '')}
-          >
-            <option value="">None</option>
+            >
+            {/* onChange={handleTagChange} */}
+            <option value="">Wybierz tag</option>
             {tags.length > 0 &&
               tags.map((tag) => (
                 <option key={tag.id} value={tag.id}>
@@ -130,13 +141,7 @@ export const TransactionForm = ({
         </label>
         <button
           type="button"
-          className="hover:text-green-600 transition-colors cursor-pointer disabled:hover:shadow-none
-          focus:outline-none
-          disabled:transform-none
-          disabled:text-gray-100
-          disabled:focus:outline-none
-          disabled:focus:ring-0
-          disabled:cursor-not-allowed"
+          className="p-1 hover:bg-green-50 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={onAddTag}
           disabled={!!(goalValue && goalValue.trim() !== '')}
         >
@@ -145,16 +150,14 @@ export const TransactionForm = ({
       </div>
 
       <label className="floating-label">
-        <span>Goal</span>
+        <span className="text-sm text-gray-600">Cel</span>
         <select
-          defaultValue=""
-          className="select bg-gray-100 w-full 
-          focus:outline-none disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500"
+          className="select bg-gray-100 w-full focus:outline-none disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500 rounded-lg"
           {...register('goal')}
-          onChange={handleGoalChange}
           disabled={!!(tagValue && tagValue.trim() !== '')}
-        >
-          <option value="">None</option>
+          >
+          {/* onChange={handleGoalChange} */}
+          <option value="">Wybierz cel</option>
           {goals.length > 0 &&
             goals.map((goal) => (
               <option key={goal.id} value={goal.id}>
@@ -168,13 +171,16 @@ export const TransactionForm = ({
       </label>
 
       <label className="floating-label">
-        <span className="pointer-events-none">Date</span>
+        <span className="text-sm text-gray-600">Data *</span>
         <input
           type="date"
-          className="input w-full border-none bg-gray-100 focus:outline-none"
+          className="input w-full border-none bg-gray-100 focus:outline-none rounded-lg"
+          max={new Date().toISOString().split('T')[0]}
           {...register('date', {
             valueAsDate: true,
-            required: true
+            required: 'Data jest wymagana',
+            validate: value =>
+              value <= new Date() || 'Data nie może być w przyszłości',
           })}
         />
         {errors.date && (
@@ -183,10 +189,10 @@ export const TransactionForm = ({
       </label>
 
       <Submit
-        className="mx-auto"
+        className="w-full"
         type="submit"
-        name="Add Transaction"
-        disabled={false}
+        name="Dodaj Transakcję"
+        disabled={!isValid}
       />
     </form>
   );

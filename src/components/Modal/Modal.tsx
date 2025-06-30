@@ -150,7 +150,7 @@ export const Modal = ({
         </div>
 
         {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto p-4 min-h-0 max-h-full">
+        <div className="flex-1 overflow-y-auto min-h-0 max-h-full">
           {children}
         </div>
       </div>
