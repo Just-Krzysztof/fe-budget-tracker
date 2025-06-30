@@ -16,20 +16,40 @@ import { useGoals } from '../../hooks/useGoals';
 import { Pagination } from '../../components/Table/Pagination';
 
 const TypeCell = ({ type }: { type: TransactionType }) => {
-  const getTypeColor = (type: TransactionType) => {
+  const getTypeInfo = (type: TransactionType) => {
     switch (type) {
       case TransactionType.INCOME:
-        return 'bg-green-100 border-green-800 text-green-800';
+        return {
+          label: 'PRZYCHÓD',
+          className:
+            'bg-emerald-100 text-emerald-800 border border-emerald-200',
+        };
       case TransactionType.EXPENSE:
-        return 'bg-red-100 text-red-800 border-red-800';
+        return {
+          label: 'WYDATEK',
+          className: 'bg-rose-100 text-rose-800 border border-rose-200',
+        };
       case TransactionType.SAVING:
-        return 'bg-blue-100 text-blue-800 border-blue-800';
+        return {
+          label: 'OSZCZĘDNOŚCI',
+          className: 'bg-indigo-100 text-indigo-800 border border-indigo-200',
+        };
       default:
-        return 'bg-gray-100 text-gray-800 text-gray-800';
+        return {
+          label: type,
+          className: 'bg-slate-100 text-slate-800 border border-slate-200',
+        };
     }
   };
 
-  return <span className={`badge  ${getTypeColor(type)}`}>{type}</span>;
+  const typeInfo = getTypeInfo(type);
+  return (
+    <span
+      className={`px-2 py-1 text-xs font-medium rounded-full ${typeInfo.className}`}
+    >
+      {typeInfo.label}
+    </span>
+  );
 };
 
 export const TransactionsPage = () => {
@@ -37,7 +57,7 @@ export const TransactionsPage = () => {
   const [showTagModal, setShowTagModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 25;
-  
+
   const [tagFormData, setTagFormData] = useState({
     tagName: '',
     colorBg: '#3b82f6',
@@ -47,7 +67,7 @@ export const TransactionsPage = () => {
   const form = useTransactionForm();
   const { createTag, refetch } = useTags();
   const { refetchGoal } = useGoals();
-  
+
   const [filters, setFilters] = useState({
     month: 6,
     year: 2025,
@@ -62,7 +82,7 @@ export const TransactionsPage = () => {
   // Update filters when currentPage changes
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       skip: (page - 1) * pageSize,
     }));
@@ -110,92 +130,188 @@ export const TransactionsPage = () => {
   };
 
   return (
-    <div className="md:p-6 p-2">
-      <h1 className="text-2xl flex items-center font-bold">
-        Transactions
+    <div className="p-6 min-h-screen">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-800 mb-2">Transakcje</h1>
+          <p className="text-slate-600">Zarządzaj swoimi transakcjami</p>
+        </div>
         <button
-          className="hover:text-green-600 transition-colors cursor-pointer"
-          onClick={() => setShowModal((action) => !action)}
+          className="flex items-center justify-center w-12 h-12 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
+          onClick={() => setShowModal(!showModal)}
         >
-          <SquarePlus className="text-green-500 w-8 h-8" />
+          <SquarePlus className="w-6 h-6" />
         </button>
-      </h1>
-      
-      <div className="flex md:justify-center gap-5 overflow-x-auto flex-row">
-        {shortSummary.map((chartData) => (
-          <div
-            key={chartData.title}
-            className="w-fit my-5 bg-gray-100 rounded-box"
-          >
-            <ChartBox data={chartData.data ?? []} title={chartData.title} />
-          </div>
+      </div>
+
+      {/* Summary Charts */}
+      <div className="flex md:justify-center gap-6 overflow-x-auto flex-row mb-8 ">
+        {shortSummary.map((chartData, index) => (
+          <>
+            <div className='bg-white p-6 rounded-4xl'>
+            <h3 className="text-lg font-semibold text-slate-800 ">
+              {chartData.title}
+            </h3>
+            <div className="">
+              <ChartBox data={chartData.data ?? []} title="" />
+            </div>
+            </div>
+          </>
+          // <div
+          //   key={chartData.title}
+          //   className=""
+          // >
+          // </div>
         ))}
       </div>
-      
-      <div className="mt-8 overflow-x-auto rounded-box bg-gray-100">
-        <table className="table table-pin-rows table-auto table-pin-cols rounded-2xl w-full">
-          <thead className="">
-            <tr className="border-b-1 border-indigo-300 bg-gray-100 text-black">
-              <td />
-              <td className="text-center">Amount</td>
-              <td className="text-center">Type</td>
-              <td className="text-center">Description</td>
-              <td className="text-center">Date</td>
-              <td className="text-center">Tag</td>
-              <td className="text-center">Goal</td>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.transactions.map((transaction, index: number) => (
-              <tr
-                key={transaction.id}
-                className=" border-indigo-300 text-black hover:text-gray-500 not-last:border-b-1 hover:bg-gray-100"
-              >
-                <td>{(currentPage - 1) * pageSize + index + 1}</td>
-                <td className="text-center">{`${transaction.amount} ${transaction.currency}`}</td>
-                <td className="text-center">
-                  <TypeCell type={transaction.type} />
-                </td>
-                <td>{transaction.description}</td>
-                <td className="text-center">
-                  {new Date(transaction.date).toLocaleDateString('pl-PL')}
-                </td>
-                <td className="text-center">
-                  {transaction?.tag?.name ? (
-                    <div
-                      style={{
-                        '--tag-bg-color': transaction?.tag?.colorBg,
-                        '--tag-text-color': transaction?.tag?.colorText,
-                      }}
-                      className="badge border-(--tag-bg-color) bg-(--tag-bg-color) text-(--tag-text-color) text-nowrap"
-                    >
-                      {transaction?.tag?.name ?? '-'}
-                    </div>
-                  ) : (
-                    '-'
-                  )}
-                </td>
-                <td className="text-center">
-                  {transaction?.goal?.name ?? '-'}
-                </td>
+
+      {/* Transactions Table */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="p-6 border-b border-slate-200">
+          <h3 className="text-lg font-semibold text-slate-800">
+            Lista transakcji
+          </h3>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  LP.
+                </th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  KWOTA
+                </th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  TYP
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  OPIS
+                </th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  DATA
+                </th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  TAG
+                </th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  CEL
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        
-        {/* Paginacja */}
-        <div className="p-4">
+            </thead>
+            <tbody className="bg-white divide-y divide-slate-200">
+              {Array.isArray(transactions)
+                ? transactions.map((transaction: any, index: number) => (
+                    <tr
+                      key={transaction.id}
+                      className="hover:bg-slate-50 transition-colors duration-200"
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                        {(currentPage - 1) * pageSize + index + 1}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-900 font-medium">
+                        {`${transaction.amount} ${transaction.currency}`}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        <TypeCell type={transaction.type} />
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-900">
+                        {transaction.description}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-900">
+                        {new Date(transaction.date).toLocaleDateString('pl-PL')}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        {transaction?.tag?.name ? (
+                          <span
+                            style={{
+                              backgroundColor: transaction?.tag?.colorBg,
+                              color: transaction?.tag?.colorText,
+                            }}
+                            className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                          >
+                            {transaction?.tag?.name}
+                          </span>
+                        ) : (
+                          <span className="text-slate-400">-</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-900">
+                        {transaction?.goal?.name ?? '-'}
+                      </td>
+                    </tr>
+                  ))
+                : transactions.transactions?.map(
+                    (transaction: any, index: number) => (
+                      <tr
+                        key={transaction.id}
+                        className="hover:bg-slate-50 transition-colors duration-200"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                          {(currentPage - 1) * pageSize + index + 1}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-900 font-medium">
+                          {`${transaction.amount} ${transaction.currency}`}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                          <TypeCell type={transaction.type} />
+                        </td>
+                        <td className="px-6 py-4 text-sm text-slate-900">
+                          {transaction.description}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-900">
+                          {new Date(transaction.date).toLocaleDateString(
+                            'pl-PL'
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                          {transaction?.tag?.name ? (
+                            <span
+                              style={{
+                                backgroundColor: transaction?.tag?.colorBg,
+                                color: transaction?.tag?.colorText,
+                              }}
+                              className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                            >
+                              {transaction?.tag?.name}
+                            </span>
+                          ) : (
+                            <span className="text-slate-400">-</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-900">
+                          {transaction?.goal?.name ?? '-'}
+                        </td>
+                      </tr>
+                    )
+                  )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="px-6 py-3 bg-slate-50 border-t border-slate-200">
           <Pagination
             currentPage={currentPage}
-            totalPages={transactions.totalPages}
+            totalPages={
+              Array.isArray(transactions)
+                ? Math.ceil(transactions.length / pageSize)
+                : transactions.totalPages || 1
+            }
             onPageChange={handlePageChange}
             itemsPerPage={pageSize}
-            totalItems={transactions.totalElements}
+            totalItems={
+              Array.isArray(transactions)
+                ? transactions.length
+                : transactions.totalElements || 0
+            }
             showInfo={true}
           />
         </div>
       </div>
-      
+
       <Modal
         className="text-black"
         show={showModal}

@@ -24,7 +24,6 @@ export const TransactionForm = ({
     register,
     handleSubmit,
     formState: { errors, isValid },
-    // setValue,
   } = form;
   const { tags } = useTags();
   const { goals } = useGoals();
