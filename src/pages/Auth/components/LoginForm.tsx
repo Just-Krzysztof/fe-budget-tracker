@@ -84,6 +84,7 @@ export const LoginForm = () => {
         type="submit"
         name={isLoading ? 'Logging in...' : 'Login'}
         disabled={isLoading}
+        isLoading={isLoading}
       />
     </form>
   );

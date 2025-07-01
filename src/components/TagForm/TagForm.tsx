@@ -1,4 +1,3 @@
-import { Input } from '../Form/Input';
 import { Submit } from '../Form/Submit';
 import { TagPreview } from './TagPreview';
 import { ColorGenerator } from './ColorGenerator';
@@ -13,12 +12,14 @@ interface TagFormProps {
   formData: TagFormData;
   onFormDataChange: (data: TagFormData) => void;
   onSubmit: (data: TagFormData) => void;
+  isCreating?: boolean;
 }
 
 export const TagForm = ({
   formData,
   onFormDataChange,
   onSubmit,
+  isCreating = false,
 }: TagFormProps) => {
   const handleColorChange = (bg: string, text: string) => {
     onFormDataChange({
@@ -64,9 +65,10 @@ export const TagForm = ({
       <Submit
         className="mx-auto"
         type="button"
-        name="Create Tag"
-        disabled={!formData.tagName || !formData.colorBg || !formData.colorText}
+        name={isCreating ? 'Tworzenie...' : 'Create Tag'}
+        disabled={!formData.tagName || !formData.colorBg || !formData.colorText || isCreating}
         onClick={handleSubmit}
+        isLoading={isCreating}
       />
     </div>
   );

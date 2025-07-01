@@ -10,7 +10,7 @@ interface GoalModalProps {
 export const GoalModal = ({ onClose }: GoalModalProps) => {
   const form = useGoalForm();
   const currencies = useCurrencies();
-  const { createGoal, refetchGoal } = useGoals();
+  const { createGoal, refetchGoal, isCreating } = useGoals();
 
   type GoalFormData = {
     name: string;
@@ -112,8 +112,9 @@ export const GoalModal = ({ onClose }: GoalModalProps) => {
       <Submit
         className="mx-auto"
         type="submit"
-        name="Add Goal"
-        disabled={!isValid}
+        name={isCreating ? 'Dodawanie...' : 'Add Goal'}
+        disabled={!isValid || isCreating}
+        isLoading={isCreating}
       />
     </form>
   );

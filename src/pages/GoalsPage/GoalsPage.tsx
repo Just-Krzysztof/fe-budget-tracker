@@ -8,7 +8,7 @@ import { Modal } from '../../components/Modal/Modal';
 
 export const GoalsPage = () => {
   const [showModal, setShowModal] = useState(false);
-  const { goals } = useGoals();
+  const { goals, isLoading } = useGoals();
 
   return (
     <div className="p-6 min-h-screen">
@@ -20,24 +20,38 @@ export const GoalsPage = () => {
 
       {/* Goal Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-        {goals.length > 0 &&
-          goals.slice(0, 3).map((el) => (
-            <div key={el.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-all duration-300">
-              <Box data={el} />
+        {isLoading ? (
+          // Loading skeleton
+          Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 animate-pulse">
+              <div className="h-6 bg-slate-200 rounded mb-4 w-24"></div>
+              <div className="h-4 bg-slate-200 rounded mb-2 w-20"></div>
+              <div className="h-24 bg-slate-200 rounded mb-4"></div>
+              <div className="h-4 bg-slate-200 rounded w-16"></div>
             </div>
-          ))}
+          ))
+        ) : (
+          <>
+            {goals.length > 0 &&
+              goals.slice(0, 3).map((el) => (
+                <div key={el.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-all duration-300">
+                  <Box data={el} />
+                </div>
+              ))}
 
-        <div 
-          className="bg-white rounded-2xl shadow-sm border border-slate-200 border-dashed p-6 hover:shadow-md hover:border-indigo-300 transition-all duration-300 cursor-pointer flex items-center justify-center min-h-[200px]"
-          onClick={() => setShowModal(true)}
-        >
-          <div className="text-center">
-            <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <span className="text-indigo-600 text-2xl font-bold">+</span>
+            <div 
+              className="bg-white rounded-2xl shadow-sm border border-slate-200 border-dashed p-6 hover:shadow-md hover:border-indigo-300 transition-all duration-300 cursor-pointer flex items-center justify-center min-h-[200px]"
+              onClick={() => setShowModal(true)}
+            >
+              <div className="text-center">
+                <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-indigo-600 text-2xl font-bold">+</span>
+                </div>
+                <p className="text-slate-600 font-medium">Dodaj nowy cel</p>
+              </div>
             </div>
-            <p className="text-slate-600 font-medium">Dodaj nowy cel</p>
-          </div>
-        </div>
+          </>
+        )}
       </div>
 
       {/* Goals Table */}
@@ -57,7 +71,29 @@ export const GoalsPage = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
-              {goals.length > 0 &&
+              {isLoading ? (
+                // Loading skeleton rows
+                Array.from({ length: 5 }).map((_, index) => (
+                  <tr key={index} className="animate-pulse">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-4 bg-slate-200 rounded w-8"></div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="h-4 bg-slate-200 rounded w-32"></div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="h-4 bg-slate-200 rounded w-12"></div>
+                        <div className="flex-1 bg-slate-200 rounded-full h-2 max-w-[150px]"></div>
+                        <div className="h-4 bg-slate-200 rounded w-12"></div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-4 bg-slate-200 rounded w-20"></div>
+                    </td>
+                  </tr>
+                ))
+              ) : goals.length > 0 ? (
                 goals.map((goal, index: number) => (
                   <tr
                     key={goal.id}
@@ -91,7 +127,14 @@ export const GoalsPage = () => {
                       {new Date(goal.deadline).toLocaleDateString('pl-PL')}
                     </td>
                   </tr>
-                ))}
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="px-6 py-8 text-center text-slate-500">
+                    Brak celów do wyświetlenia
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

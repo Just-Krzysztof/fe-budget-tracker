@@ -25,8 +25,11 @@ export interface CreateTransaction {
 
 export interface Transactions {
   transaction: Transaction;
+  totalElements: number;
+  totlaPages: number;
+  hasMore: true;
 }
-interface Transaction {
+export interface Transaction {
   id: string;
   userId: string;
   amount: number;

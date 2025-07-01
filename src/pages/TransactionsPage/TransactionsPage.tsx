@@ -4,6 +4,7 @@ import { Modal } from '../../components/Modal/Modal';
 import { SquarePlus, ArrowLeftToLine } from 'lucide-react';
 import { useState } from 'react';
 import { useTransactionForm } from './hooks/useTransactionForm';
+import type { Transaction as TransactionAPI } from '../../api/transactions.api';
 import type { Transaction as TransactionFormData } from './types/transaction';
 import { TransactionType } from './types/transaction';
 import { TransactionForm } from '../../components/TransactionForm/TransactionForm';
@@ -65,7 +66,7 @@ export const TransactionsPage = () => {
   });
 
   const form = useTransactionForm();
-  const { createTag, refetch } = useTags();
+  const { createTag, refetch, isCreating: isCreatingTag } = useTags();
   const { refetchGoal } = useGoals();
 
   const [filters, setFilters] = useState({
@@ -75,9 +76,18 @@ export const TransactionsPage = () => {
     take: pageSize,
   });
 
-  const { transactions, isRefetchTransaction, createTransaction } =
-    useTransactions(filters);
-  const { shortSummary, shortSummaryRefetch } = useShortSummary();
+  const {
+    transactions,
+    isLoadingTransaction,
+    isRefetchTransaction,
+    createTransaction,
+    isCreatingTransaction,
+  } = useTransactions(filters);
+  const {
+    shortSummary,
+    isLoading: isLoadingShortSummary,
+    shortSummaryRefetch,
+  } = useShortSummary();
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -94,11 +104,11 @@ export const TransactionsPage = () => {
       await createTransaction({
         amount: data.amount,
         type: data.goal ? 'SAVING' : data.type,
-        tagId: data.tag || null,
-        goalId: data.goal || null,
+        tagId: data.tag || undefined,
+        goalId: data.goal || undefined,
         currency: data.currency,
         description: data.description,
-        date: new Date(data.date),
+        date: new Date(data.date).toISOString(),
       });
       await isRefetchTransaction();
       await shortSummaryRefetch();
@@ -147,16 +157,26 @@ export const TransactionsPage = () => {
 
       {/* Summary Charts */}
       <div className="flex md:justify-center gap-6 overflow-x-auto flex-row mb-8 ">
-        {shortSummary.map((chartData, index) => (
-          <div key={index} className="bg-white p-6 rounded-4xl">
-            <h3 className="text-lg font-semibold text-slate-800 ">
-              {chartData.title}
-            </h3>
-            <div className="">
-              <ChartBox data={chartData.data ?? []} title="" />
-            </div>
-          </div>
-        ))}
+        {isLoadingShortSummary
+          ? Array.from({ length: 3 }).map((_, index) => (
+              <div
+                key={index}
+                className="bg-white p-6 rounded-4xl min-w-[200px] animate-pulse"
+              >
+                <div className="h-6 bg-slate-200 rounded mb-4 w-24"></div>
+                <div className="h-32 bg-slate-200 rounded"></div>
+              </div>
+            ))
+          : shortSummary.map((chartData, index) => (
+              <div key={index} className="bg-white p-6 rounded-4xl">
+                <h3 className="text-lg font-semibold text-slate-800 ">
+                  {chartData.title}
+                </h3>
+                <div className="">
+                  <ChartBox data={chartData.data ?? []} title="" />
+                </div>
+              </div>
+            ))}
       </div>
 
       {/* Transactions Table */}
@@ -195,8 +215,36 @@ export const TransactionsPage = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
-              {Array.isArray(transactions)
-                ? transactions.map((transaction: any, index: number) => (
+              {isLoadingTransaction ? (
+                // Loading skeleton rows
+                Array.from({ length: 5 }).map((_, index) => (
+                  <tr key={index} className="animate-pulse">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-4 bg-slate-200 rounded w-8"></div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-4 bg-slate-200 rounded w-20"></div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-4 bg-slate-200 rounded w-16"></div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-4 bg-slate-200 rounded w-24"></div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-4 bg-slate-200 rounded w-20"></div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-6 bg-slate-200 rounded w-12"></div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-4 bg-slate-200 rounded w-16"></div>
+                    </td>
+                  </tr>
+                ))
+              ) : Array.isArray(transactions) ? (
+                transactions.map(
+                  (transaction: TransactionAPI, index: number) => (
                     <tr
                       key={transaction.id}
                       className="hover:bg-slate-50 transition-colors duration-200"
@@ -235,51 +283,61 @@ export const TransactionsPage = () => {
                         {transaction?.goal?.name ?? '-'}
                       </td>
                     </tr>
-                  ))
-                : transactions.transactions?.map(
-                    (transaction: any, index: number) => (
-                      <tr
-                        key={transaction.id}
-                        className="hover:bg-slate-50 transition-colors duration-200"
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
-                          {(currentPage - 1) * pageSize + index + 1}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-900 font-medium">
-                          {`${transaction.amount} ${transaction.currency}`}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                          <TypeCell type={transaction.type} />
-                        </td>
-                        <td className="px-6 py-4 text-sm text-slate-900">
-                          {transaction.description}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-900">
-                          {new Date(transaction.date).toLocaleDateString(
-                            'pl-PL'
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                          {transaction?.tag?.name ? (
-                            <span
-                              style={{
-                                backgroundColor: transaction?.tag?.colorBg,
-                                color: transaction?.tag?.colorText,
-                              }}
-                              className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
-                            >
-                              {transaction?.tag?.name}
-                            </span>
-                          ) : (
-                            <span className="text-slate-400">-</span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-900">
-                          {transaction?.goal?.name ?? '-'}
-                        </td>
-                      </tr>
-                    )
-                  )}
+                  )
+                )
+              ) : transactions.transactions ? (
+                transactions.transactions.map(
+                  (transaction: any, index: number) => (
+                    <tr
+                      key={transaction.id}
+                      className="hover:bg-slate-50 transition-colors duration-200"
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                        {(currentPage - 1) * pageSize + index + 1}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-900 font-medium">
+                        {`${transaction.amount} ${transaction.currency}`}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        <TypeCell type={transaction.type} />
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-900">
+                        {transaction.description}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-900">
+                        {new Date(transaction.date).toLocaleDateString('pl-PL')}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        {transaction?.tag?.name ? (
+                          <span
+                            style={{
+                              backgroundColor: transaction?.tag?.colorBg,
+                              color: transaction?.tag?.colorText,
+                            }}
+                            className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                          >
+                            {transaction?.tag?.name}
+                          </span>
+                        ) : (
+                          <span className="text-slate-400">-</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-900">
+                        {transaction?.goal?.name ?? '-'}
+                      </td>
+                    </tr>
+                  )
+                )
+              ) : (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="px-6 py-8 text-center text-slate-500"
+                  >
+                    Brak transakcji do wyświetlenia
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -322,6 +380,7 @@ export const TransactionsPage = () => {
               onAddTag={() => setShowTagModal(true)}
               tagValue={form.tagValue}
               goalValue={form.goalValue}
+              isSubmitting={isCreatingTransaction}
             />
           </FormProvider>
         ) : (
@@ -336,6 +395,7 @@ export const TransactionsPage = () => {
               formData={tagFormData}
               onFormDataChange={setTagFormData}
               onSubmit={handleTagSubmit}
+              isCreating={isCreatingTag}
             />
           </>
         )}

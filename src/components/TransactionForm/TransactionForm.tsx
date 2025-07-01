@@ -5,12 +5,14 @@ import type { Transaction as TransactionFormData } from '../../pages/Transaction
 import { useTags } from '../../hooks/useTags';
 import { useGoals } from '../../hooks/useGoals';
 import { useCurrencies } from '../../contexts/CurrencyContext';
+
 interface TransactionFormProps {
   form: UseFormReturn<TransactionFormData>;
   onSubmit: (data: TransactionFormData) => void;
   onAddTag: () => void;
   tagValue?: string;
   goalValue?: string;
+  isSubmitting?: boolean;
 }
 
 export const TransactionForm = ({
@@ -19,14 +21,15 @@ export const TransactionForm = ({
   onAddTag,
   tagValue,
   goalValue,
+  isSubmitting = false,
 }: TransactionFormProps) => {
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
   } = form;
-  const { tags } = useTags();
-  const { goals } = useGoals();
+  const { tags, isLoading: isLoadingTags } = useTags();
+  const { goals, isLoading: isLoadingGoals } = useGoals();
   const currencies = useCurrencies();
 
   return (
@@ -108,11 +111,13 @@ export const TransactionForm = ({
           <select
             className="select bg-gray-100 w-full disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500 focus:outline-none rounded-lg cursor-pointer"
             {...register('tag')}
-            disabled={!!(goalValue && goalValue.trim() !== '')}
+            disabled={!!(goalValue && goalValue.trim() !== '') || isLoadingTags}
             >
             {/* onChange={handleTagChange} */}
-            <option value="">Wybierz tag</option>
-            {tags.length > 0 &&
+            <option value="">
+              {isLoadingTags ? 'Ładowanie tagów...' : 'Wybierz tag'}
+            </option>
+            {!isLoadingTags && tags.length > 0 &&
               tags.map((tag) => (
                 <option key={tag.id} value={tag.id}>
                   {tag.name}
@@ -125,7 +130,7 @@ export const TransactionForm = ({
         </label>
         <button
           type="button"
-          className="p-1 hover:bg-green-50 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="p-1 hover:bg-green-50 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={onAddTag}
           disabled={!!(goalValue && goalValue.trim() !== '')}
         >
@@ -138,11 +143,13 @@ export const TransactionForm = ({
         <select
           className="select bg-gray-100 w-full focus:outline-none disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500 rounded-lg cursor-pointer"
           {...register('goal')}
-          disabled={!!(tagValue && tagValue.trim() !== '')}
+          disabled={!!(tagValue && tagValue.trim() !== '') || isLoadingGoals}
           >
           {/* onChange={handleGoalChange} */}
-          <option value="">Wybierz cel</option>
-          {goals.length > 0 &&
+          <option value="">
+            {isLoadingGoals ? 'Ładowanie celów...' : 'Wybierz cel'}
+          </option>
+          {!isLoadingGoals && goals.length > 0 &&
             goals.map((goal) => (
               <option key={goal.id} value={goal.id}>
                 {goal.name}
@@ -175,8 +182,9 @@ export const TransactionForm = ({
       <Submit
         className="w-full"
         type="submit"
-        name="Dodaj Transakcję"
-        disabled={!isValid}
+        name={isSubmitting ? 'Dodawanie...' : 'Dodaj Transakcję'}
+        disabled={!isValid || isSubmitting}
+        isLoading={isSubmitting}
       />
     </form>
   );

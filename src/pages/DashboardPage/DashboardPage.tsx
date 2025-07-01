@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 export const DashboardPage = () => {
   const currentMonth = new Date().getUTCMonth() + 1;
   const currentYear = new Date().getUTCFullYear();
-  const data = useMonthySummary(currentMonth, currentYear);
+  const { monthySummary, isLoading } = useMonthySummary(currentMonth, currentYear);
   
   
   return (
@@ -17,8 +17,42 @@ export const DashboardPage = () => {
 
       {/* Summary Cards by Currency */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-        {Array.isArray(data.monthySummary) &&
-          data.monthySummary.map((summary: MonthySummary, index: number) => (
+        {isLoading ? (
+          // Loading skeleton
+          Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 animate-pulse"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="h-6 bg-slate-200 rounded w-32"></div>
+                <div className="h-6 bg-slate-200 rounded-full w-16"></div>
+              </div>
+              <div className="space-y-4">
+                <div className="bg-slate-100 rounded-xl p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="h-4 bg-slate-200 rounded w-20"></div>
+                    <div className="h-5 bg-slate-200 rounded w-24"></div>
+                  </div>
+                </div>
+                <div className="bg-slate-100 rounded-xl p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="h-4 bg-slate-200 rounded w-16"></div>
+                    <div className="h-5 bg-slate-200 rounded w-24"></div>
+                  </div>
+                </div>
+                <div className="bg-slate-100 rounded-xl p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="h-4 bg-slate-200 rounded w-24"></div>
+                    <div className="h-5 bg-slate-200 rounded w-24"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          Array.isArray(monthySummary) ? (
+            monthySummary.map((summary: MonthySummary, index: number) => (
             <div
               key={index}
               className="bg-white rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-all duration-300 hover:border-slate-300"
@@ -98,7 +132,13 @@ export const DashboardPage = () => {
                 </div>
               </div>
             </div>
-          ))}
+            ))
+          ) : (
+            <div className="col-span-full text-center py-8 text-slate-500">
+              Brak danych do wyświetlenia
+            </div>
+          )
+        )}
       </div>
 
       {/* Quick Actions */}

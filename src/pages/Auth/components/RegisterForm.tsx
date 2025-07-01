@@ -121,6 +121,7 @@ export const RegisterForm = () => {
         type="submit"
         name={isLoading ? 'Creating account...' : 'Register'}
         disabled={isLoading}
+        isLoading={isLoading}
       />
       {/* <button type="submit" disabled={isLoading}>
         {isLoading ? 'Logging in...' : 'Login'}

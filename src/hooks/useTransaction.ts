@@ -5,6 +5,7 @@ import {
   transactionsApi,
   type Transaction,
   type FilterTransaction,
+  type CreateTransaction,
 } from '../api/transactions.api';
 
 export const useTransactions = (filters?: Partial<FilterTransaction>) => {
@@ -35,7 +36,7 @@ export const useTransactions = (filters?: Partial<FilterTransaction>) => {
   // console.log('filters', filters);
 
   const createTransaction = useMutation({
-    mutationFn: (transactionData) => {
+    mutationFn: (transactionData: Omit<CreateTransaction, 'userId'>) => {
       if (!user?.id) throw Error('User is not authenticated');
       return transactionsApi.createTransaction({
         ...transactionData,
@@ -58,5 +59,6 @@ export const useTransactions = (filters?: Partial<FilterTransaction>) => {
     error,
     isRefetchTransaction: refetch,
     createTransaction: createTransaction.mutateAsync,
+    isCreatingTransaction: createTransaction.isPending,
   };
 };
