@@ -79,7 +79,6 @@ export const TransactionsPage = () => {
     useTransactions(filters);
   const { shortSummary, shortSummaryRefetch } = useShortSummary();
 
-  // Update filters when currentPage changes
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     setFilters((prev) => ({
@@ -90,6 +89,7 @@ export const TransactionsPage = () => {
 
   const onSubmit = async (data: TransactionFormData) => {
     console.log('typeof data.date:', typeof data.date, data.date);
+
     try {
       await createTransaction({
         amount: data.amount,
@@ -98,7 +98,7 @@ export const TransactionsPage = () => {
         goalId: data.goal || null,
         currency: data.currency,
         description: data.description,
-        date: data.date,
+        date: new Date(data.date),
       });
       await isRefetchTransaction();
       await shortSummaryRefetch();
@@ -138,7 +138,7 @@ export const TransactionsPage = () => {
           <p className="text-slate-600">Zarządzaj swoimi transakcjami</p>
         </div>
         <button
-          className="flex items-center justify-center w-12 h-12 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
+          className="flex items-center justify-center w-12 h-12 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer"
           onClick={() => setShowModal(!showModal)}
         >
           <SquarePlus className="w-6 h-6" />
@@ -148,21 +148,14 @@ export const TransactionsPage = () => {
       {/* Summary Charts */}
       <div className="flex md:justify-center gap-6 overflow-x-auto flex-row mb-8 ">
         {shortSummary.map((chartData, index) => (
-          <>
-            <div className='bg-white p-6 rounded-4xl'>
+          <div key={index} className="bg-white p-6 rounded-4xl">
             <h3 className="text-lg font-semibold text-slate-800 ">
               {chartData.title}
             </h3>
             <div className="">
               <ChartBox data={chartData.data ?? []} title="" />
             </div>
-            </div>
-          </>
-          // <div
-          //   key={chartData.title}
-          //   className=""
-          // >
-          // </div>
+          </div>
         ))}
       </div>
 

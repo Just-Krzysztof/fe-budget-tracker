@@ -5,7 +5,7 @@ export const transactionSchema = z
     amount: z.number().min(1, 'Amount is required'),
     type: z.enum(['INCOME', 'EXPENSE', 'SAVING']),
     currency: z.string().min(1, 'Currency is required'),
-    date: z.date(),
+    date: z.string().min(1, 'Date is required'),
     description: z
       .string()
       .max(250, "Descriptio can't be longer than 250 characters"),
@@ -14,8 +14,6 @@ export const transactionSchema = z
     tagName: z.string().optional(),
   })
   .superRefine((data, ctx) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
     const tagSet = !!data.tag && data.tag.trim() !== '';
     const goalSet = !!data.goal && data.goal.trim() !== '';
     if (tagSet && goalSet) {
@@ -33,7 +31,12 @@ export const transactionSchema = z
         path: ['tag'],
       });
     }
-    if (data.date > today) {
+    const today = new Date();
+    const selectedDate = new Date(data.date + 'T00:00:00'); 
+  
+    today.setHours(0, 0, 0, 0);
+    
+    if (selectedDate > today) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Date can't be in future",

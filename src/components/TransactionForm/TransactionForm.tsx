@@ -37,7 +37,7 @@ export const TransactionForm = ({
           <input
             type="number"
             step="0.01"
-            className="input w-full bg-gray-100 focus:outline-none rounded-lg "
+            className="input w-full bg-gray-100 focus:outline-none rounded-lg cursor-pointer"
             placeholder="0.00"
             {...register('amount', { 
               required: 'Amoun is required',
@@ -53,7 +53,7 @@ export const TransactionForm = ({
         <label className="floating-label w-32">
           <span className="text-sm text-gray-600">Currency *</span>
           <select
-            className="select w-full bg-gray-100 focus:outline-none rounded-lg"
+            className="select w-full bg-gray-100 focus:outline-none rounded-lg cursor-pointer" 
             {...register('currency', { required: 'Waluta jest wymagana' })}
           >
             <option value="">Select currency</option>
@@ -72,7 +72,7 @@ export const TransactionForm = ({
       <label className="floating-label">
         <span className="text-sm text-gray-600">Rodzaj transakcji *</span>
         <select
-          className="select bg-gray-100 w-full focus:outline-none rounded-lg"
+          className="select bg-gray-100 w-full focus:outline-none rounded-lg cursor-pointer"
           {...register('type', { required: 'Rodzaj transakcji jest wymagany' })}
         >
           <option value="">Select Type</option>
@@ -91,7 +91,7 @@ export const TransactionForm = ({
       <label className="floating-label">
         <span className="text-sm text-gray-600">Description</span>
         <textarea
-          className="textarea resize-none w-full bg-gray-100 focus:outline-none rounded-lg h-24"
+          className="textarea resize-none w-full bg-gray-100 focus:outline-none rounded-lg h-24 cursor-pointer"
           placeholder="Dodaj opis transakcji..."
           {...register('description', { 
             minLength: { value: 3, message: 'The description must be at least 3 characters long' }
@@ -106,7 +106,7 @@ export const TransactionForm = ({
         <label className="floating-label w-full">
           <span className="text-sm text-gray-600">Tag</span>
           <select
-            className="select bg-gray-100 w-full disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500 focus:outline-none rounded-lg"
+            className="select bg-gray-100 w-full disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500 focus:outline-none rounded-lg cursor-pointer"
             {...register('tag')}
             disabled={!!(goalValue && goalValue.trim() !== '')}
             >
@@ -125,7 +125,7 @@ export const TransactionForm = ({
         </label>
         <button
           type="button"
-          className="p-1 hover:bg-green-50 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-1 hover:bg-green-50 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           onClick={onAddTag}
           disabled={!!(goalValue && goalValue.trim() !== '')}
         >
@@ -136,7 +136,7 @@ export const TransactionForm = ({
       <label className="floating-label">
         <span className="text-sm text-gray-600">Cel</span>
         <select
-          className="select bg-gray-100 w-full focus:outline-none disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500 rounded-lg"
+          className="select bg-gray-100 w-full focus:outline-none disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-500 rounded-lg cursor-pointer"
           {...register('goal')}
           disabled={!!(tagValue && tagValue.trim() !== '')}
           >
@@ -153,18 +153,18 @@ export const TransactionForm = ({
           <p className="text-red-500 text-xs mt-1">{errors.goal.message}</p>
         )}
       </label>
-
       <label className="floating-label">
         <span className="text-sm text-gray-600">Data *</span>
         <input
           type="date"
-          className="input w-full border-none bg-gray-100 focus:outline-none rounded-lg"
+          className="input w-full border-none bg-gray-100 focus:outline-none rounded-lg date-input cursor-pointer"
           max={new Date().toISOString().split('T')[0]}
+          style={{
+            colorScheme: 'light',
+          }}
           {...register('date', {
-            valueAsDate: true,
             required: 'Data jest wymagana',
-            validate: value =>
-              value <= new Date() || 'Data nie może być w przyszłości',
+
           })}
         />
         {errors.date && (
