@@ -33,11 +33,11 @@ export const Box = ({ data, type = 'goal', onClick }: BoxProps) => {
   return (
     <div
       className={`
-        flex-grow flex-shrink basis-64 p-4 rounded-xl shadow-lg
+        flex-grow flex-shrink basis-64 p-4 rounded-xl 
         ${
           isAddTile
-            ? 'border-2 border-dashed border-gray-400 bg-white text-gray-500 cursor-pointer hover:border-blue-500 hover:text-blue-500 transition-colors duration-200 flex flex-col items-center justify-center'
-            : 'border border-gray-200 shadow-gray-300 bg-white'
+            ? 'border-2 border-dashed text-gray-500 cursor-pointer hover:border-blue-500 hover:text-blue-500 transition-colors duration-200 flex flex-col items-center justify-center'
+            : ''
         }
       `}
       onClick={isAddTile ? onClick : undefined}
